@@ -1,5 +1,6 @@
 import { MAJOR_KEY_SIGNATURES, MINOR_KEY_SIGNATURES } from "./key-signatures";
-import { type Accidental, PitchLetters, type PitchClass, type PitchCollection, type PitchLetter, type Scale, type ScaleType, Accidentals } from "./types";
+import { PitchLetters, type PitchClass, type PitchCollection, type Scale, type ScaleType, Accidentals } from "./types";
+import { splitPitchName, makePitchName } from "./utils";
 
 interface ScaleOptions {
     tonic: PitchClass,
@@ -81,15 +82,6 @@ function buildNaturalMinorScale(tonic: PitchClass): Scale {
     };
 }
 
-function splitPitchName(pitchName: PitchClass): [PitchLetter, Accidental] {
-    // Is there a better way to handle this? Is it worth making PitchClass its own typed object with fields?
-    return [pitchName.slice(0, 1) as PitchLetter, pitchName.slice(1) as Accidental];
-}
-
-export function makePitchName(pitchLetter: PitchLetter, accidental: Accidental): PitchClass {
-    return `${pitchLetter}${accidental}` as PitchClass;
-}
-
 
 function modifyScaleDegrees(mode: 'raise' | 'lower', scaleDegrees: number[], collection: PitchCollection): PitchCollection {
     let newCollection = [...collection];
@@ -130,6 +122,7 @@ function modifyScaleDegrees(mode: 'raise' | 'lower', scaleDegrees: number[], col
     return newCollection;
 }
 
+
 function buildHarmonicMinorScale(tonic: PitchClass): Scale {
     let ascendingScale: PitchCollection = [...PitchLetters];
 
@@ -138,12 +131,23 @@ function buildHarmonicMinorScale(tonic: PitchClass): Scale {
 
     ascendingScale = modifyScaleDegrees('raise', [7], ascendingScale);
 
-
     return { ascending: ascendingScale };
 }
 
+
 function buildMelodicMinorScale(tonic: PitchClass): Scale {
-    return { ascending: [] };
+    // Do descending first to save one iteration (raise once, instead of raise->lower back down)
+    let descendingScale: PitchCollection = [...PitchLetters];
+
+    descendingScale = applyKeySignature(tonic, 'natural-minor', descendingScale);
+    descendingScale = shiftScaleToStartOnTonic(tonic, descendingScale);
+
+    let ascendingScale = modifyScaleDegrees('raise', [6, 7], descendingScale);
+
+    return {
+        ascending: ascendingScale,
+        descending: descendingScale
+    };
 }
 
 

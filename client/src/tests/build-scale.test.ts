@@ -83,3 +83,24 @@ test("builds a D# harmonic minor scale", () => {
         ascending: ['D#', 'E#', 'F#', 'G#', 'A#', 'B', 'C##']
     })
 });
+
+
+test("builds a C melodic minor scale", () => {
+    expect(buildScale({
+        type: 'melodic-minor',
+        tonic: 'C'
+    })).toEqual({
+        ascending: ['C', 'D', 'Eb', 'F', 'G', 'A', 'B'],
+        descending: ['C', 'D', 'Eb', 'F', 'G', 'Ab', 'Bb']
+    })
+});
+
+test("builds a D# melodic minor scale", () => {
+    expect(buildScale({
+        type: 'melodic-minor',
+        tonic: 'D#'
+    })).toEqual({
+        ascending: ['D#', 'E#', 'F#', 'G#', 'A#', 'B#', 'C##'],
+        descending: ['D#', 'E#', 'F#', 'G#', 'A#', 'B', 'C#']
+    })
+});
