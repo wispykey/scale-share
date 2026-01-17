@@ -10,7 +10,9 @@ export type PitchLetter = typeof PitchLetters[number];
 export const NoteDurations = ['w', 'h.', 'h', 'q.', 'q', '8.', '8', '16'] as const;
 export type NoteDuration = typeof NoteDurations[number];
 
-export type Accidental = '#' | '##' | 'b' | 'bb' | 'n' | '';
+export const Accidentals = ['bb', 'b', '', '#', '##'] as const;
+export type Accidental = typeof Accidentals[number];
+
 export type Articulation = 's' | 't';
 
 export type PitchClass = `${PitchLetter}${Accidental}`;

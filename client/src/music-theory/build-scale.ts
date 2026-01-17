@@ -1,5 +1,5 @@
 import { MAJOR_KEY_SIGNATURES, MINOR_KEY_SIGNATURES } from "./key-signatures";
-import { PitchLetters, type PitchClass, type PitchCollection, type Scale, type ScaleType } from "./types";
+import { type Accidental, PitchLetters, type PitchClass, type PitchCollection, type PitchLetter, type Scale, type ScaleType, Accidentals } from "./types";
 
 interface ScaleOptions {
     tonic: PitchClass,
@@ -34,14 +34,14 @@ function applyKeySignature(tonic: PitchClass, scaleType: ScaleType, collection: 
 
     let newCollection: PitchCollection = [];
 
-    for (let pitchClassInKey of keySignature) {
-        for (let pitchClassInCollection of collection) {
+    for (let pitchClassInCollection of collection) {
+        let pitchClassToAdd = pitchClassInCollection;
+        for (let pitchClassInKey of keySignature) {
             if (pitchClassInKey.charAt(0) == pitchClassInCollection) {
-                newCollection.push(pitchClassInKey);
-                // Will only apply to one note in scale, can break early
-                break;
+                pitchClassToAdd = pitchClassInKey;
             }
         }
+        newCollection.push(pitchClassToAdd);
     }
 
     return newCollection;
@@ -51,7 +51,7 @@ function shiftScaleToStartOnTonic(tonic: PitchClass, collection: PitchCollection
     let shiftAmount = tonic.charCodeAt(0) - PitchLetters[0].charCodeAt(0);
     let newCollection: PitchCollection = [];
 
-    for (let i = 0; i < shiftAmount; i++) {
+    for (let i = 0; i < collection.length; i++) {
         newCollection.push(collection[(i + shiftAmount) % collection.length]);
     }
 
@@ -71,11 +71,75 @@ function buildMajorScale(tonic: PitchClass): Scale {
 }
 
 function buildNaturalMinorScale(tonic: PitchClass): Scale {
-    return { ascending: [] };
+    let ascendingScale: PitchClass[] = [...PitchLetters];
+
+    ascendingScale = applyKeySignature(tonic, 'natural-minor', ascendingScale);
+    ascendingScale = shiftScaleToStartOnTonic(tonic, ascendingScale);
+
+    return {
+        ascending: ascendingScale
+    };
+}
+
+function splitPitchName(pitchName: PitchClass): [PitchLetter, Accidental] {
+    // Is there a better way to handle this? Is it worth making PitchClass its own typed object with fields?
+    return [pitchName.slice(0, 1) as PitchLetter, pitchName.slice(1) as Accidental];
+}
+
+export function makePitchName(pitchLetter: PitchLetter, accidental: Accidental): PitchClass {
+    return `${pitchLetter}${accidental}` as PitchClass;
+}
+
+
+function modifyScaleDegrees(mode: 'raise' | 'lower', scaleDegrees: number[], collection: PitchCollection): PitchCollection {
+    let newCollection = [...collection];
+    for (let scaleDegree of scaleDegrees) {
+        let index = scaleDegree - 1;
+
+        if (index < 0 || index >= collection.length)
+            throw new Error(`Scale degree ${scaleDegree} is out of bounds for scale of length ${collection.length}`);
+
+        const naturalIndex = Accidentals.findIndex(a => a === '');
+        const pitchClassAtIndex = collection[index];
+        const [pitchLetter, pitchAccidental] = splitPitchName(pitchClassAtIndex);
+
+        let accidentalIndex = Accidentals.findIndex(a => a === pitchAccidental);
+
+        if (accidentalIndex < 0) {
+            accidentalIndex = naturalIndex;
+        }
+
+        if (mode === 'raise' && accidentalIndex === Accidentals.length - 1) {
+            console.error(`Cannot raise a double sharp (##); aborting raising of ${pitchClassAtIndex} in ${collection}`);
+            break;
+        }
+
+        if (mode === 'lower' && accidentalIndex === 0) {
+            console.error(`Cannot lower a double flat (bb); aborting lowering of ${pitchClassAtIndex} in ${collection}`);
+            break;
+        }
+
+        let direction = mode === 'raise' ? 1 : -1;
+        accidentalIndex += direction;
+        let newAccidental = (accidentalIndex === naturalIndex) ? '' : Accidentals[accidentalIndex];
+
+        newCollection[index] = makePitchName(pitchLetter, newAccidental);
+
+    }
+
+    return newCollection;
 }
 
 function buildHarmonicMinorScale(tonic: PitchClass): Scale {
-    return { ascending: [] };
+    let ascendingScale: PitchCollection = [...PitchLetters];
+
+    ascendingScale = applyKeySignature(tonic, 'natural-minor', ascendingScale);
+    ascendingScale = shiftScaleToStartOnTonic(tonic, ascendingScale);
+
+    ascendingScale = modifyScaleDegrees('raise', [7], ascendingScale);
+
+
+    return { ascending: ascendingScale };
 }
 
 function buildMelodicMinorScale(tonic: PitchClass): Scale {
