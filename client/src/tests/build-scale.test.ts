@@ -95,6 +95,7 @@ test("builds a C melodic minor scale", () => {
     })
 });
 
+
 test("builds a D# melodic minor scale", () => {
     expect(buildScale({
         type: 'melodic-minor',
