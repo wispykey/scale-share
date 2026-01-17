@@ -2,6 +2,7 @@
  * Types to represent notes and scales independent of register
  */
 
+// Order matters; starts on 'A' for simplified ASCII-based arithmetic
 export const PitchLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G'] as const;
 export type PitchLetter = typeof PitchLetters[number];
 

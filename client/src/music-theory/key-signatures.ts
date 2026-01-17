@@ -1,4 +1,6 @@
-export const MAJOR_KEY_SIGNATURES: Record<string, string[]> = {
+import type { PitchClass } from "./types";
+
+export const MAJOR_KEY_SIGNATURES: Record<string, PitchClass[]> = {
     "C": [],
 
     "G": ["F#"],
@@ -18,7 +20,7 @@ export const MAJOR_KEY_SIGNATURES: Record<string, string[]> = {
     "Cb": ["Bb", "Eb", "Ab", "Db", "Gb", "Cb", "Fb"]
 };
 
-export const MINOR_KEY_SIGNATURES: Record<string, string[]> = {
+export const MINOR_KEY_SIGNATURES: Record<string, PitchClass[]> = {
     "A": [],
 
     "E": ["F#"],
