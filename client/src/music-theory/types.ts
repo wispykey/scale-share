@@ -15,9 +15,9 @@ export type Accidental = typeof Accidentals[number];
 
 export type Articulation = 's' | 't';
 
-export type PitchClass = `${PitchLetter}${Accidental}`;
+export type PitchName = `${PitchLetter}${Accidental}`;
 
-export type PitchCollection = PitchClass[];
+export type PitchCollection = PitchName[];
 
 export type Scale = {
     ascending: PitchCollection,
@@ -29,3 +29,12 @@ export type ScaleType =
     'natural-minor' |
     'harmonic-minor' |
     'melodic-minor';
+
+
+export type Note = {
+    name: PitchName,
+    register: number,
+    duration?: NoteDuration,
+    isRest?: boolean
+    // isTiedToNextNote: boolean - to support a 'linked list' implementation of ties
+}

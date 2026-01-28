@@ -1,22 +1,22 @@
 import { MAJOR_KEY_SIGNATURES, MINOR_KEY_SIGNATURES } from "./key-signatures";
-import { PitchLetters, type PitchClass, type PitchCollection, type Scale, type ScaleType, Accidentals } from "./types";
+import { PitchLetters, type PitchName, type PitchCollection, type Scale, type ScaleType, Accidentals } from "./types";
 import { splitPitchName, makePitchName } from "./utils";
 
 interface ScaleOptions {
-    tonic: PitchClass,
+    tonic: PitchName,
     type: ScaleType
 }
 
-type ScaleBuilderFunction = (tonic: PitchClass) => Scale;
+type ScaleBuilderFunction = (tonic: PitchName) => Scale;
 
 const SCALE_BUILDER_STRATEGIES: Record<string, ScaleBuilderFunction> = {
-    'major': (tonic: PitchClass) => buildMajorScale(tonic),
-    'natural-minor': (tonic: PitchClass) => buildNaturalMinorScale(tonic),
-    'harmonic-minor': (tonic: PitchClass) => buildHarmonicMinorScale(tonic),
-    'melodic-minor': (tonic: PitchClass) => buildMelodicMinorScale(tonic),
+    'major': (tonic: PitchName) => buildMajorScale(tonic),
+    'natural-minor': (tonic: PitchName) => buildNaturalMinorScale(tonic),
+    'harmonic-minor': (tonic: PitchName) => buildHarmonicMinorScale(tonic),
+    'melodic-minor': (tonic: PitchName) => buildMelodicMinorScale(tonic),
 }
 
-function getKeySignature(tonic: PitchClass, scaleType: ScaleType): PitchCollection | null {
+function getKeySignature(tonic: PitchName, scaleType: ScaleType): PitchCollection | null {
     switch (scaleType) {
         case 'major':
             if (!(tonic in MAJOR_KEY_SIGNATURES))
@@ -29,7 +29,7 @@ function getKeySignature(tonic: PitchClass, scaleType: ScaleType): PitchCollecti
     }
 }
 
-function applyKeySignature(tonic: PitchClass, scaleType: ScaleType, collection: PitchCollection): PitchCollection {
+function applyKeySignature(tonic: PitchName, scaleType: ScaleType, collection: PitchCollection): PitchCollection {
     let keySignature: PitchCollection | null = getKeySignature(tonic, scaleType);
     if (!keySignature) return collection;
 
@@ -48,7 +48,7 @@ function applyKeySignature(tonic: PitchClass, scaleType: ScaleType, collection: 
     return newCollection;
 }
 
-function shiftScaleToStartOnTonic(tonic: PitchClass, collection: PitchCollection) {
+function shiftScaleToStartOnTonic(tonic: PitchName, collection: PitchCollection) {
     let shiftAmount = tonic.charCodeAt(0) - PitchLetters[0].charCodeAt(0);
     let newCollection: PitchCollection = [];
 
@@ -60,8 +60,8 @@ function shiftScaleToStartOnTonic(tonic: PitchClass, collection: PitchCollection
 }
 
 
-function buildMajorScale(tonic: PitchClass): Scale {
-    let ascendingScale: PitchClass[] = [...PitchLetters];
+function buildMajorScale(tonic: PitchName): Scale {
+    let ascendingScale: PitchName[] = [...PitchLetters];
 
     ascendingScale = applyKeySignature(tonic, 'major', ascendingScale);
     ascendingScale = shiftScaleToStartOnTonic(tonic, ascendingScale);
@@ -71,8 +71,8 @@ function buildMajorScale(tonic: PitchClass): Scale {
     };
 }
 
-function buildNaturalMinorScale(tonic: PitchClass): Scale {
-    let ascendingScale: PitchClass[] = [...PitchLetters];
+function buildNaturalMinorScale(tonic: PitchName): Scale {
+    let ascendingScale: PitchName[] = [...PitchLetters];
 
     ascendingScale = applyKeySignature(tonic, 'natural-minor', ascendingScale);
     ascendingScale = shiftScaleToStartOnTonic(tonic, ascendingScale);
@@ -123,7 +123,7 @@ function modifyScaleDegrees(mode: 'raise' | 'lower', scaleDegrees: number[], col
 }
 
 
-function buildHarmonicMinorScale(tonic: PitchClass): Scale {
+function buildHarmonicMinorScale(tonic: PitchName): Scale {
     let ascendingScale: PitchCollection = [...PitchLetters];
 
     ascendingScale = applyKeySignature(tonic, 'natural-minor', ascendingScale);
@@ -135,7 +135,7 @@ function buildHarmonicMinorScale(tonic: PitchClass): Scale {
 }
 
 
-function buildMelodicMinorScale(tonic: PitchClass): Scale {
+function buildMelodicMinorScale(tonic: PitchName): Scale {
     // Do descending first to save one iteration (raise once, instead of raise->lower back down)
     let descendingScale: PitchCollection = [...PitchLetters];
 
