@@ -52,3 +52,26 @@ export function convertPitchNumberToNote(pitchNumber: number): Note {
         register: Math.floor(pitchNumber / 12) - 1,
     };
 }
+
+export function note(noteName: PitchName, noteRegister: number) {
+    return { name: noteName, register: noteRegister }
+}
+
+export function notes(noteString: string): Note[] {
+    return noteString
+        .trim()
+        .split(/\s+/)
+        .map(token => {
+            const match = token.match(/^([A-G])(bb|b|##|#|n)?(\d+)$/);
+            if (!match) {
+                throw new Error(`Invalid note: ${token}`);
+            }
+            const [, letter, accidental = "", register] = match;
+
+            return {
+                // Can we strengthen/prove these 
+                name: makePitchName(letter as PitchLetter, accidental as Accidental),
+                register: Number(register),
+            };
+        });
+}

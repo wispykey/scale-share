@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import { convertNoteToPitchNumber, convertPitchNameToPitchClass, convertPitchNumberToNote } from '../music-theory/utils'
+import { convertNoteToPitchNumber, convertPitchNameToPitchClass, convertPitchNumberToNote, note, notes } from '../music-theory/utils'
 
 
 test("convert C4 to pitch number", () => {
@@ -86,3 +86,21 @@ test("convert 71 to B4", () => {
         register: 4
     });
 });
+
+
+test("convert valid notes in note string", () => {
+    expect(notes("C4 D#4 F##4 G5 B3 Bb2 Bbb6 A4")).toEqual([
+        note("C", 4),
+        note("D#", 4),
+        note("F##", 4),
+        note("G", 5),
+        note("B", 3),
+        note("Bb", 2),
+        note("Bbb", 6),
+        note("A", 4)
+    ])
+});
+
+// test("throw on invalid notes in note string", () => {
+//     expect(notes("C")).toThrow(Error);
+// })
