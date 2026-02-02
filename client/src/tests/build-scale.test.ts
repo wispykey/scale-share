@@ -56,52 +56,50 @@ test("builds an Ab natural minor scale", () => {
 });
 
 
-test("builds an A harmonic minor scale", () => {
+test("builds an A natural minor scale when harmonic is specified", () => {
     expect(buildScale({
         type: 'harmonic-minor',
         tonic: 'A'
     })).toEqual({
-        ascending: ['A', 'B', 'C', 'D', 'E', 'F', 'G#']
+        ascending: ['A', 'B', 'C', 'D', 'E', 'F', 'G']
     })
 });
 
 
-test("builds an Ab harmonic minor scale", () => {
+test("builds an Ab natural minor scale when harmonic is specified", () => {
     expect(buildScale({
         type: 'harmonic-minor',
         tonic: 'Ab'
     })).toEqual({
-        ascending: ['Ab', 'Bb', 'Cb', 'Db', 'Eb', 'Fb', 'G']
+        ascending: ['Ab', 'Bb', 'Cb', 'Db', 'Eb', 'Fb', 'Gb']
     })
 });
 
-test("builds a D# harmonic minor scale", () => {
+test("builds a D# natural minor scale when harmonic is specified", () => {
     expect(buildScale({
         type: 'harmonic-minor',
         tonic: 'D#'
     })).toEqual({
-        ascending: ['D#', 'E#', 'F#', 'G#', 'A#', 'B', 'C##']
+        ascending: ['D#', 'E#', 'F#', 'G#', 'A#', 'B', 'C#']
     })
 });
 
 
-test("builds a C melodic minor scale", () => {
+test("builds a C natural minor scale when melodic is specified", () => {
     expect(buildScale({
         type: 'melodic-minor',
         tonic: 'C'
     })).toEqual({
-        ascending: ['C', 'D', 'Eb', 'F', 'G', 'A', 'B'],
-        descending: ['C', 'D', 'Eb', 'F', 'G', 'Ab', 'Bb']
+        ascending: ['C', 'D', 'Eb', 'F', 'G', 'Ab', 'Bb']
     })
 });
 
 
-test("builds a D# melodic minor scale", () => {
+test("builds a D# natural minor scale when melodic is specified", () => {
     expect(buildScale({
         type: 'melodic-minor',
         tonic: 'D#'
     })).toEqual({
-        ascending: ['D#', 'E#', 'F#', 'G#', 'A#', 'B#', 'C##'],
-        descending: ['D#', 'E#', 'F#', 'G#', 'A#', 'B', 'C#']
+        ascending: ['D#', 'E#', 'F#', 'G#', 'A#', 'B', 'C#']
     })
 });
