@@ -1,4 +1,4 @@
-import type { Accidental, PitchName, PitchLetter, Note } from "./types";
+import { type Accidental, type PitchName, type PitchLetter, type Note, type Interval, NaturalMinorScaleNotes, MajorScaleNotes, Accidentals } from "./types";
 
 export function splitPitchName(pitchName: PitchName): [PitchLetter, Accidental] {
     // Is there a better way to handle this? Is it worth making PitchClass its own typed object with fields?
@@ -74,4 +74,78 @@ export function notes(noteString: string): Note[] {
                 register: Number(register),
             };
         });
+}
+
+getPitchNameFromInterval('C', 'M2');
+
+
+
+function modifyPitchName(mode: 'raise' | 'lower', pitchName: PitchName): PitchName {
+
+    const naturalIndex = Accidentals.findIndex(a => a === '');
+    const [pitchLetter, pitchAccidental] = splitPitchName(pitchName);
+
+    let accidentalIndex = Accidentals.findIndex(a => a === pitchAccidental);
+
+    if (accidentalIndex < 0) {
+        accidentalIndex = naturalIndex;
+    }
+
+    if (mode === 'raise' && accidentalIndex === Accidentals.length - 1) {
+        console.error(`Cannot raise a double sharp (##); aborting raising of ${pitchName}`);
+        return pitchName;
+    }
+
+    if (mode === 'lower' && accidentalIndex === 0) {
+        console.error(`Cannot lower a double flat (bb) aborting raising of ${pitchName}`);
+        return pitchName;
+    }
+
+    let direction = mode === 'raise' ? 1 : -1;
+    accidentalIndex += direction;
+    let newAccidental = (accidentalIndex === naturalIndex) ? '' : Accidentals[accidentalIndex];
+
+    return makePitchName(pitchLetter, newAccidental);
+}
+
+
+export function getPitchNameFromInterval(pitchName: PitchName, interval: Interval) {
+    // Parse
+    if (interval.length != 2) return;
+
+    let quality = interval.charAt(0);
+    let size = +interval.charAt(1);
+
+    // Validate
+    if (!(['m', 'M', 'd', 'P', 'A'].includes(quality))) return;
+    if (!size || size > 7 || size < 1) return;
+
+    // Use major scale and major intervals as a starting reference point
+    let scale = MajorScaleNotes[pitchName as keyof typeof MajorScaleNotes];
+    if (!scale) return;
+
+    switch (quality) {
+        case 'm':
+            return modifyPitchName('lower', scale[size - 1]);
+        case 'd':
+            // Perfect intervals (e.g. P1, P4, P5) are only one step away from diminished
+            if (size === 1 || size === 4 || size === 5) {
+                return modifyPitchName('lower', scale[size - 1]);
+            } else {
+                // All others are two steps away
+                return modifyPitchName('lower', modifyPitchName('lower', scale[size - 1]));
+            }
+        case 'A':
+            if (size === 1 || size === 4 || size === 5) {
+                return modifyPitchName('raise', scale[size - 1]);
+            } else {
+                return modifyPitchName('raise', modifyPitchName('raise', scale[size - 1]));
+            }
+        case 'P':
+        case 'M':
+        default:
+            return scale[size - 1];
+    }
+
+
 }

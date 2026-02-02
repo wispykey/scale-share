@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import { convertNoteToPitchNumber, convertPitchNameToPitchClass, convertPitchNumberToNote, note, notes } from '../music-theory/utils'
+import { convertNoteToPitchNumber, convertPitchNameToPitchClass, convertPitchNumberToNote, getPitchNameFromInterval, note, notes } from '../music-theory/utils'
 
 
 test("convert C4 to pitch number", () => {
@@ -104,3 +104,89 @@ test("convert valid notes in note string", () => {
 // test("throw on invalid notes in note string", () => {
 //     expect(notes("C")).toThrow(Error);
 // })
+
+
+test("compute correct major intervals away from C", () => {
+    expect(getPitchNameFromInterval('C', 'M2')).toEqual('D');
+    expect(getPitchNameFromInterval('C', 'M3')).toEqual('E');
+    expect(getPitchNameFromInterval('C', 'M6')).toEqual('A');
+    expect(getPitchNameFromInterval('C', 'M7')).toEqual('B');
+});
+
+test("compute correct perfect intervals away from C", () => {
+    expect(getPitchNameFromInterval('C', 'P1')).toEqual('C');
+    expect(getPitchNameFromInterval('C', 'P4')).toEqual('F');
+    expect(getPitchNameFromInterval('C', 'P5')).toEqual('G');
+});
+
+test("compute correct minor intervals away from C", () => {
+    expect(getPitchNameFromInterval('C', 'm2')).toEqual('Db');
+    expect(getPitchNameFromInterval('C', 'm3')).toEqual('Eb');
+    expect(getPitchNameFromInterval('C', 'm6')).toEqual('Ab');
+    expect(getPitchNameFromInterval('C', 'm7')).toEqual('Bb');
+});
+
+test("compute correct diminished intervals away from C", () => {
+    expect(getPitchNameFromInterval('C', 'd2')).toEqual('Dbb');
+    expect(getPitchNameFromInterval('C', 'd3')).toEqual('Ebb');
+    expect(getPitchNameFromInterval('C', 'd4')).toEqual('Fb');
+    expect(getPitchNameFromInterval('C', 'd5')).toEqual('Gb');
+    expect(getPitchNameFromInterval('C', 'd6')).toEqual('Abb');
+    expect(getPitchNameFromInterval('C', 'd7')).toEqual('Bbb');
+});
+
+test("compute correct augmented intervals away from C", () => {
+    expect(getPitchNameFromInterval('C', 'A1')).toEqual('C#');
+    expect(getPitchNameFromInterval('C', 'A2')).toEqual('D##');
+    expect(getPitchNameFromInterval('C', 'A3')).toEqual('E##');
+    expect(getPitchNameFromInterval('C', 'A4')).toEqual('F#');
+    expect(getPitchNameFromInterval('C', 'A5')).toEqual('G#');
+    expect(getPitchNameFromInterval('C', 'A6')).toEqual('A##');
+    expect(getPitchNameFromInterval('C', 'A7')).toEqual('B##');
+});
+
+
+
+test("compute correct major intervals away from F#", () => {
+    expect(getPitchNameFromInterval('F#', 'M2')).toEqual('G#');
+    expect(getPitchNameFromInterval('F#', 'M3')).toEqual('A#');
+    expect(getPitchNameFromInterval('F#', 'M6')).toEqual('D#');
+    expect(getPitchNameFromInterval('F#', 'M7')).toEqual('E#');
+});
+
+test("compute correct perfect intervals away from F#", () => {
+    expect(getPitchNameFromInterval('F#', 'P1')).toEqual('F#');
+    expect(getPitchNameFromInterval('F#', 'P4')).toEqual('B');
+    expect(getPitchNameFromInterval('F#', 'P5')).toEqual('C#');
+});
+
+test("compute correct minor intervals away from F#", () => {
+    expect(getPitchNameFromInterval('F#', 'm2')).toEqual('G');
+    expect(getPitchNameFromInterval('F#', 'm3')).toEqual('A');
+    expect(getPitchNameFromInterval('F#', 'm6')).toEqual('D');
+    expect(getPitchNameFromInterval('F#', 'm7')).toEqual('E');
+});
+
+test("compute correct diminished intervals away from F#", () => {
+    expect(getPitchNameFromInterval('F#', 'd2')).toEqual('Gb');
+    expect(getPitchNameFromInterval('F#', 'd3')).toEqual('Ab');
+    expect(getPitchNameFromInterval('F#', 'd4')).toEqual('Bb');
+    expect(getPitchNameFromInterval('F#', 'd5')).toEqual('C');
+    expect(getPitchNameFromInterval('F#', 'd6')).toEqual('Db');
+    expect(getPitchNameFromInterval('F#', 'd7')).toEqual('Eb');
+});
+
+test("compute correct augmented intervals away from F#", () => {
+    expect(getPitchNameFromInterval('F#', 'A1')).toEqual('F##');
+    expect(getPitchNameFromInterval('F#', 'A2')).toEqual('G##');
+    expect(getPitchNameFromInterval('F#', 'A3')).toEqual('A##');
+    expect(getPitchNameFromInterval('F#', 'A4')).toEqual('B#');
+    expect(getPitchNameFromInterval('F#', 'A5')).toEqual('C##');
+    expect(getPitchNameFromInterval('F#', 'A6')).toEqual('D##');
+    expect(getPitchNameFromInterval('F#', 'A7')).toEqual('E##');
+});
+
+
+test("throw error on invalid intervals", () => {
+
+});
