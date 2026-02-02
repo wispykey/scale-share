@@ -78,6 +78,7 @@ export const MajorScaleNotes = {
     'Cb': ['Cb', 'Db', 'Eb', 'Fb', 'Gb', 'Ab', 'Bb'],
 } as const satisfies Partial<Record<PitchName, PitchName[]>>;
 
+export type MajorScaleKey = keyof typeof MajorScaleNotes;
 
 export const NaturalMinorScaleNotes = {
     'A': ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
@@ -96,3 +97,5 @@ export const NaturalMinorScaleNotes = {
     'G#': ['G#', 'A#', 'B', 'C#', 'D#', 'E', 'F#'],
     'Ab': ['Ab', 'Bb', 'Cb', 'Db', 'Eb', 'Fb', 'Gb'],
 } as const satisfies Partial<Record<PitchName, PitchName[]>>;
+
+export type MinorScaleKey = keyof typeof MajorScaleNotes;

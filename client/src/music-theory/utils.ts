@@ -1,4 +1,4 @@
-import { type Accidental, type PitchName, type PitchLetter, type Note, type Interval, NaturalMinorScaleNotes, MajorScaleNotes, Accidentals } from "./types";
+import { type Accidental, type PitchName, type PitchLetter, type Note, type Interval, NaturalMinorScaleNotes, MajorScaleNotes, Accidentals, type MajorScaleKey, type MinorScaleKey } from "./types";
 
 export function splitPitchName(pitchName: PitchName): [PitchLetter, Accidental] {
     // Is there a better way to handle this? Is it worth making PitchClass its own typed object with fields?
@@ -76,10 +76,6 @@ export function notes(noteString: string): Note[] {
         });
 }
 
-getPitchNameFromInterval('C', 'M2');
-
-
-
 function modifyPitchName(mode: 'raise' | 'lower', pitchName: PitchName): PitchName {
 
     const naturalIndex = Accidentals.findIndex(a => a === '');
@@ -148,4 +144,13 @@ export function getPitchNameFromInterval(pitchName: PitchName, interval: Interva
     }
 
 
+}
+
+
+export function isMajorScaleKey(value: string): value is MajorScaleKey {
+    return value in MajorScaleNotes;
+}
+
+export function isMinorScaleKey(value: string): value is MinorScaleKey {
+    return value in NaturalMinorScaleNotes;
 }
