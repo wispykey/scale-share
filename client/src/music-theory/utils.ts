@@ -76,7 +76,7 @@ export function notes(noteString: string): Note[] {
         });
 }
 
-function modifyPitchName(mode: 'raise' | 'lower', pitchName: PitchName): PitchName {
+export function modifyPitchName(mode: 'raise' | 'lower', pitchName: PitchName): PitchName {
 
     const naturalIndex = Accidentals.findIndex(a => a === '');
     const [pitchLetter, pitchAccidental] = splitPitchName(pitchName);

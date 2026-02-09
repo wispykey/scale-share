@@ -1,5 +1,5 @@
 import type { Scale, Note } from "./types";
-import { convertNoteToPitchNumber } from "./utils";
+import { convertNoteToPitchNumber, modifyPitchName } from "./utils";
 
 
 interface ScaleExpansionOptions {
@@ -37,6 +37,33 @@ function selectFirstNote(scale: Scale, initialRegister: number, minNote: Note, m
     // TODO: Return error to inform user on frontend
     firstNote.register = initialRegister;
     return firstNote;
+}
+
+function applyScaleDegreeAlterations(scale: Scale, notes: Note[]) {
+    if (scale.type === 'harmonic-minor') {
+        // raise all the sevenths
+        for (let i = 0; i < notes.length; i++) {
+            if (notes[i].name === scale.ascending[6]) {
+                notes[i].name = modifyPitchName('raise', notes[i].name);
+            }
+        }
+    }
+    if (scale.type === 'melodic-minor') {
+        // raise all the sixths and sevenths, only when ascending
+
+        // starting at second note to allow comparison between two adjacent notes
+        // this is OK because we assume scales will always start on tonic; never on sixth/seventh
+        for (let i = 1; i < notes.length; i++) {
+            // Check if ascending by comparing absolute pitch numbers, e.g. 71 >? 70
+            if (convertNoteToPitchNumber(notes[i]) <= convertNoteToPitchNumber(notes[i - 1]))
+                continue;
+            // can't just use i directly, because scale may not always land on tonic at top/bottom notes
+            if (notes[i].name === scale.ascending[5] || notes[i].name === scale.ascending[6]) {
+                notes[i].name = modifyPitchName('raise', notes[i].name);
+            }
+        }
+
+    }
 }
 
 export function expandScale(scale: Scale, options: ScaleExpansionOptions): Note[] {
@@ -90,6 +117,9 @@ export function expandScale(scale: Scale, options: ScaleExpansionOptions): Note[
         addNotesInDirection('down');
         addNotesInDirection('up', firstNote);
     }
+
+    applyScaleDegreeAlterations(scale, notes);
+
 
     return notes;
 }

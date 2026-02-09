@@ -22,6 +22,7 @@ export type PitchCollection = PitchName[];
 export type Scale = {
     ascending: PitchCollection,
     descending?: PitchCollection,
+    type: ScaleType
 }
 
 export type ScaleType =
