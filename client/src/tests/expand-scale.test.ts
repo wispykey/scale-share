@@ -124,7 +124,7 @@ test("should create A melodic minor full range", () => {
 });
 
 
-test("should create A melodic minor full range, with max range on scale degree 6", () => {
+test("should create A melodic minor full range, with max range on raised scale degree 6", () => {
     expect(expandScale(aMelodicMinor, {
         initialRegister: 4,
         minNote: note("Bb", 3),
@@ -132,14 +132,14 @@ test("should create A melodic minor full range, with max range on scale degree 6
     })).toEqual(
         notes("A4 B4 C5 D5 E5 F#5 G#5 \
             A5 B5 C6 D6 E6 F#6 \
-            F6 E6 D6 C6 B5 A5 \
+            E6 D6 C6 B5 A5 \
             G5 F5 E5 D5 C5 B4 A4 \
             G4 F4 E4 D4 C4 B3 \
             C4 D4 E4 F#4 G#4 A4")
     );
 });
 
-test("should create A melodic minor full range, with max range on scale degree 7", () => {
+test("should create A melodic minor full range, with max range on raised scale degree 7", () => {
     expect(expandScale(aMelodicMinor, {
         initialRegister: 4,
         minNote: note("Bb", 3),
@@ -147,10 +147,87 @@ test("should create A melodic minor full range, with max range on scale degree 7
     })).toEqual(
         notes("A4 B4 C5 D5 E5 F#5 G#5 \
             A5 B5 C6 D6 E6 F#6 G#6 \
-            G6 F6 E6 D6 C6 B5 A5 \
+            F#6 E6 D6 C6 B5 A5 \
             G5 F5 E5 D5 C5 B4 A4 \
             G4 F4 E4 D4 C4 B3 \
             C4 D4 E4 F#4 G#4 A4")
     );
 });
 
+test("should create A melodic minor full range, with max range on natural scale degree 6", () => {
+    expect(expandScale(aMelodicMinor, {
+        initialRegister: 4,
+        minNote: note("Bb", 3),
+        maxNote: note("F", 6)
+    })).toEqual(
+        // Note the lack of F#6 at the top of range
+        notes("A4 B4 C5 D5 E5 F#5 G#5 \
+            A5 B5 C6 D6 E6 \
+            D6 C6 B5 A5 \
+            G5 F5 E5 D5 C5 B4 A4 \
+            G4 F4 E4 D4 C4 B3 \
+            C4 D4 E4 F#4 G#4 A4")
+    );
+});
+
+test("should create A melodic minor full range, with max range on natural scale degree 7", () => {
+    expect(expandScale(aMelodicMinor, {
+        initialRegister: 4,
+        minNote: note("Bb", 3),
+        maxNote: note("G", 6)
+    })).toEqual(
+        notes("A4 B4 C5 D5 E5 F#5 G#5 \
+            A5 B5 C6 D6 E6 F#6 \
+            E6 D6 C6 B5 A5 \
+            G5 F5 E5 D5 C5 B4 A4 \
+            G4 F4 E4 D4 C4 B3 \
+            C4 D4 E4 F#4 G#4 A4")
+    );
+});
+
+test("should create A melodic minor full range, with min range on raised scale degree 7", () => {
+    expect(expandScale(aMelodicMinor, {
+        initialRegister: 4,
+        minNote: note("G#", 4),
+        maxNote: note("A", 5)
+    })).toEqual(
+        notes("A4 B4 C5 D5 E5 F#5 G#5 A5 \
+            G5 F5 E5 D5 C5 B4 A4")
+    );
+});
+
+test("should create A melodic minor full range, with min range on natural scale degree 7", () => {
+    expect(expandScale(aMelodicMinor, {
+        initialRegister: 4,
+        minNote: note("G", 4),
+        maxNote: note("A", 5)
+    })).toEqual(
+        notes("A4 B4 C5 D5 E5 F#5 G#5 A5 \
+            G5 F5 E5 D5 C5 B4 A4 \
+            G4 A4")
+    );
+});
+
+test("should create A melodic minor full range, with min range on raised scale degree 6", () => {
+    expect(expandScale(aMelodicMinor, {
+        initialRegister: 4,
+        minNote: note("F#", 4),
+        maxNote: note("A", 5)
+    })).toEqual(
+        notes("A4 B4 C5 D5 E5 F#5 G#5 A5 \
+            G5 F5 E5 D5 C5 B4 A4 \
+            G4 A4")
+    );
+});
+
+test("should create A melodic minor full range, with min range on natural scale degree 6", () => {
+    expect(expandScale(aMelodicMinor, {
+        initialRegister: 4,
+        minNote: note("F", 4),
+        maxNote: note("A", 5)
+    })).toEqual(
+        notes("A4 B4 C5 D5 E5 F#5 G#5 A5 \
+            G5 F5 E5 D5 C5 B4 A4 \
+            G4 F4 G4 A4")
+    );
+});

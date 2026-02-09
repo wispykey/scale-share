@@ -48,21 +48,30 @@ function applyScaleDegreeAlterations(scale: Scale, notes: Note[]) {
             }
         }
     }
-    if (scale.type === 'melodic-minor') {
+    else if (scale.type === 'melodic-minor') {
         // raise all the sixths and sevenths, only when ascending
 
-        // starting at second note to allow comparison between two adjacent notes
-        // this is OK because we assume scales will always start on tonic; never on sixth/seventh
+        // starting at second note (i = 1) is OK because we assume scales will always start on tonic; never on sixth/seventh
+        // so the first note will never be a note that we need to modify
         for (let i = 1; i < notes.length; i++) {
             // Check if ascending by comparing absolute pitch numbers, e.g. 71 >? 70
-            if (convertNoteToPitchNumber(notes[i]) <= convertNoteToPitchNumber(notes[i - 1]))
+            if (convertNoteToPitchNumber(notes[i]) <= convertNoteToPitchNumber(notes[i - 1])) {
+                // Edge case: raise sixth scale degree while descending, if max range note is the seventh scale degree of this melodic minor scale
+                if (i >= 2 && notes[i].name === scale.ascending[5] && notes[i - 2].name === modifyPitchName('raise', notes[i].name)) {
+                    notes[i].name = notes[i - 2].name;
+                }
                 continue;
+            }
+            // Edge case: do not raise if min range note is the sixth scale degree of this melodic minor scale
+            if (i >= 2 && notes[i].name === notes[i - 2].name) {
+                continue;
+            }
+
             // can't just use i directly, because scale may not always land on tonic at top/bottom notes
             if (notes[i].name === scale.ascending[5] || notes[i].name === scale.ascending[6]) {
                 notes[i].name = modifyPitchName('raise', notes[i].name);
             }
         }
-
     }
 }
 
@@ -119,7 +128,6 @@ export function expandScale(scale: Scale, options: ScaleExpansionOptions): Note[
     }
 
     applyScaleDegreeAlterations(scale, notes);
-
 
     return notes;
 }
