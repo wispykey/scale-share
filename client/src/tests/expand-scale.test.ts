@@ -10,6 +10,11 @@ const cMajor: Scale = buildScale({
     type: 'major'
 });
 
+const cMajorTriad: Scale = buildScale({
+    tonic: 'C',
+    type: 'major-triad-arpeggio'
+})
+
 const fSharpMajor: Scale = buildScale({
     tonic: 'F#',
     type: 'major'
@@ -229,5 +234,15 @@ test("should create A melodic minor full range, with min range on natural scale 
         notes("A4 B4 C5 D5 E5 F#5 G#5 A5 \
             G5 F5 E5 D5 C5 B4 A4 \
             G4 F4 G4 A4")
+    );
+});
+
+test("should create one octave C major arpeggio", () => {
+    expect(expandScale(cMajorTriad, {
+        initialRegister: 4,
+        minNote: note("C", 4),
+        maxNote: note("C", 5)
+    })).toEqual(
+        notes("C4 E4 G4 C5 G4 E4 C4")
     );
 });
