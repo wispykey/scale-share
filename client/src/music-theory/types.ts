@@ -29,7 +29,11 @@ export type ScaleType =
     'major' |
     'natural-minor' |
     'harmonic-minor' |
-    'melodic-minor';
+    'melodic-minor' |
+    'major-triad-arpeggio' |
+    'minor-triad-arpeggio';
+// 'dominant-seventh-arpeggio' |
+// 'diminished-seventh-arpeggio';
 
 
 export type Note = {
@@ -44,6 +48,9 @@ export type Note = {
 export const ScaleIntervalsMap = {
     'major': ['P1', 'M2', 'M3', 'P4', 'P5', 'M6', 'M7'],
     'natural-minor': ['P1', 'M2', 'm3', 'P4', 'P5', 'm6', 'm7'],
+    'major-triad-arpeggio': ['P1', 'M3', 'P5'],
+    'minor-triad-arpeggio': ['P1', 'm3', 'P5'],
+
     // Harmonic and melodic minor scales are implemented as contextual rules 
 } as const satisfies Partial<Record<ScaleType, readonly Interval[]>>;
 
@@ -100,3 +107,6 @@ export const NaturalMinorScaleNotes = {
 } as const satisfies Partial<Record<PitchName, PitchName[]>>;
 
 export type MinorScaleKey = keyof typeof MajorScaleNotes;
+
+export const TRIAD_SCALE_DEGREES_AS_INDICES = [0, 2, 4];
+export const SEVENTH_CHORD_SCALE_DEGREES_AS_INDICES = [0, 2, 4, 6];

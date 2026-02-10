@@ -114,3 +114,36 @@ test("builds a D# natural minor scale as base, even when melodic is specified", 
         type: 'melodic-minor'
     })
 });
+
+
+test("builds a C major triad arpeggio", () => {
+    expect(buildScale({
+        type: 'major-triad-arpeggio',
+        tonic: 'C'
+    })).toEqual({
+        ascending: ['C', 'E', 'G'],
+        type: 'major-triad-arpeggio'
+    })
+});
+
+test("builds a F# major triad arpeggio", () => {
+    expect(buildScale({
+        type: 'major-triad-arpeggio',
+        tonic: 'F#'
+    })).toEqual({
+        ascending: ['F#', 'A#', 'C#'],
+        type: 'major-triad-arpeggio'
+    })
+});
+
+
+test("builds a F# minor triad arpeggio", () => {
+    expect(buildScale({
+        type: 'minor-triad-arpeggio',
+        tonic: 'F#'
+    })).toEqual({
+        ascending: ['F#', 'A', 'C#'],
+        type: 'minor-triad-arpeggio'
+    })
+});
+
