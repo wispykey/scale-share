@@ -1,0 +1,1 @@
+{"version":"4.0.17","results":[["NewAngular:src/tests/expand-scale.test.ts",{"duration":10.822962000000018,"failed":true}],["NewAngular:src/tests/build-scale.test.ts",{"duration":3.5416869999999676,"failed":false}],["NewAngular:src/tests/utils.test.ts",{"duration":6.156955000000039,"failed":false}]]}
