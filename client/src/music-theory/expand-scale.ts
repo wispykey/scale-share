@@ -1,5 +1,5 @@
 import type { Scale, Note } from "./types";
-import { convertNoteToPitchNumber, modifyPitchName } from "./utils";
+import { convertNoteToPitchNumber, convertPitchNameToPitchClass, modifyPitchName } from "./utils";
 
 
 interface ScaleExpansionOptions {
@@ -89,10 +89,8 @@ export function expandScale(scale: Scale, options: ScaleExpansionOptions): Note[
         // Find where we left off in the scale; not always exact begin/end of scale due to range restrictions
         let prevNote = notes.at(-1);
         let step = ascending ? 1 : scaleLength - 1;
-        let currScale = ascending ? scale.ascending : (scale.descending !== undefined ? scale.descending : scale.ascending);
+        let currScale = scale.ascending;
         let start = (currScale.findIndex(n => n === prevNote!.name) + step) % currScale.length;
-        // Handle register increase/decrease boundary
-        let boundaryPitch = ascending ? 'B' : 'C';
 
         for (let i = 0; i < numOctaves; i++) {
             for (let j = 0; j < currScale.length; j++) {
@@ -102,14 +100,27 @@ export function expandScale(scale: Scale, options: ScaleExpansionOptions): Note[
                 // Temp copy of register is needed to allow incrementing post-validation
                 let nextRegister = currRegister;
                 let nextIndex = (start + j * step) % scaleLength;
-                if (prevNote!.name.charAt(0) === boundaryPitch) {
-                    nextRegister += (ascending ? 1 : -1);
+
+                // Update register if boundary has been crossed
+                let currNotePitchClass = convertPitchNameToPitchClass(currScale[nextIndex]);
+                let prevNotePitchClass = convertPitchNameToPitchClass(prevNote!.name);
+                if (ascending) {
+                    if (currNotePitchClass < prevNotePitchClass) {
+                        nextRegister += 1;
+                    }
+                } else {
+                    if (currNotePitchClass > prevNotePitchClass) {
+                        nextRegister -= 1;
+                    }
                 }
+
                 let nextNote = {
                     name: currScale[nextIndex],
                     register: nextRegister,
                 };
+
                 if (!isNoteInRange(nextNote, options.minNote, options.maxNote)) return;
+
                 notes.push(nextNote);
                 currRegister = nextRegister;
             }

@@ -241,8 +241,64 @@ test("should create one octave C major arpeggio", () => {
     expect(expandScale(cMajorTriad, {
         initialRegister: 4,
         minNote: note("C", 4),
-        maxNote: note("C", 5)
+        maxNote: note("C", 5),
     })).toEqual(
         notes("C4 E4 G4 C5 G4 E4 C4")
+    );
+});
+
+
+test("should create one octave C major arpeggio due to range restriction", () => {
+    expect(expandScale(cMajorTriad, {
+        initialRegister: 4,
+        minNote: note("C", 4),
+        maxNote: note("C", 5),
+        octaves: 2
+    })).toEqual(
+        notes("C4 E4 G4 C5 G4 E4 C4")
+    );
+});
+
+test("should create two octave C major arpeggio despite larger range", () => {
+    expect(expandScale(cMajorTriad, {
+        initialRegister: 4,
+        minNote: note("C", 4),
+        maxNote: note("C", 7),
+        octaves: 2
+    })).toEqual(
+        notes("C4 E4 G4 C5 E5 G5 C6 G5 E5 C5 G4 E4 C4")
+    );
+});
+
+
+test("should create two octave C major arpeggio despite larger range", () => {
+    expect(expandScale(cMajorTriad, {
+        initialRegister: 4,
+        minNote: note("C", 4),
+        maxNote: note("C", 7),
+        octaves: 2
+    })).toEqual(
+        notes("C4 E4 G4 C5 E5 G5 C6 G5 E5 C5 G4 E4 C4")
+    );
+});
+
+
+test("should create a small, full-range C major arpeggio", () => {
+    expect(expandScale(cMajorTriad, {
+        initialRegister: 4,
+        minNote: note("C", 4),
+        maxNote: note("G", 4)
+    })).toEqual(
+        notes("C4 E4 G4 E4 C4")
+    );
+});
+
+test("should create a small, full-range C major arpeggio that goes below starting note", () => {
+    expect(expandScale(cMajorTriad, {
+        initialRegister: 4,
+        minNote: note("G", 3),
+        maxNote: note("G", 4)
+    })).toEqual(
+        notes("C4 E4 G4 E4 C4 G3 C4")
     );
 });
