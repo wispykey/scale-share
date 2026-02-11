@@ -60,10 +60,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "NewAngular:build:production"
+              "buildTarget": "ScaleShareClient:build:production"
             },
             "development": {
-              "buildTarget": "NewAngular:build:development"
+              "buildTarget": "ScaleShareClient:build:development"
             }
           },
           "defaultConfiguration": "development"
