@@ -1,11 +1,10 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { TonicSelector } from "./tonic-selector/tonic-selector";
-import { ScaleSelector } from "./scale-selector/scale-selector";
+import { ScaleBuilder } from './scale-builder/scale-builder';
 
 @Component({
     selector: 'app-root',
-    imports: [RouterOutlet, TonicSelector, ScaleSelector],
+    imports: [RouterOutlet, ScaleBuilder],
     templateUrl: './app.html',
     styleUrl: './app.scss',
 })

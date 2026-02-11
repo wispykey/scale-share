@@ -3,4 +3,8 @@ import { Injectable } from '@angular/core';
 @Injectable({
     providedIn: 'root',
 })
-export class ScaleBuilderService {}
+export class ScaleBuilderService {
+    buildScale() {
+
+    }
+}

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ScaleSelector } from './scale-selector';
+import { ScaleBuilder } from './scale-builder';
 
-describe('ScaleSelector', () => {
-  let component: ScaleSelector;
-  let fixture: ComponentFixture<ScaleSelector>;
+describe('ScaleBuilder', () => {
+  let component: ScaleBuilder;
+  let fixture: ComponentFixture<ScaleBuilder>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ScaleSelector]
+      imports: [ScaleBuilder]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ScaleSelector);
+    fixture = TestBed.createComponent(ScaleBuilder);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });
