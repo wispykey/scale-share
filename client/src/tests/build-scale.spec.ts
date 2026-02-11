@@ -3,147 +3,147 @@ import { buildScale } from '../music-theory/build-scale'
 
 test("builds a C major scale", () => {
     expect(buildScale({
-        type: 'major',
+        scaleType: 'major',
         tonic: 'C'
     })).toEqual({
         ascending: ['C', 'D', 'E', 'F', 'G', 'A', 'B'],
-        type: 'major'
+        scaleType: 'major'
     })
 });
 
 test("builds a C# major scale", () => {
     expect(buildScale({
-        type: 'major',
+        scaleType: 'major',
         tonic: 'C#'
     })).toEqual({
         ascending: ['C#', 'D#', 'E#', 'F#', 'G#', 'A#', 'B#'],
-        type: 'major'
+        scaleType: 'major'
     })
 });
 
 test("builds a Gb major scale", () => {
     expect(buildScale({
-        type: 'major',
+        scaleType: 'major',
         tonic: 'Gb'
     })).toEqual({
         ascending: ['Gb', 'Ab', 'Bb', 'Cb', 'Db', 'Eb', 'F'],
-        type: 'major'
+        scaleType: 'major'
     })
 });
 
 test("builds an A natural minor scale", () => {
     expect(buildScale({
-        type: 'natural-minor',
+        scaleType: 'natural-minor',
         tonic: 'A'
     })).toEqual({
         ascending: ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
-        type: 'natural-minor'
+        scaleType: 'natural-minor'
     })
 });
 
 test("builds a G# natural minor scale", () => {
     expect(buildScale({
-        type: 'natural-minor',
+        scaleType: 'natural-minor',
         tonic: 'G#'
     })).toEqual({
         ascending: ['G#', 'A#', 'B', 'C#', 'D#', 'E', 'F#'],
-        type: 'natural-minor'
+        scaleType: 'natural-minor'
     })
 });
 
 test("builds an Ab natural minor scale", () => {
     expect(buildScale({
-        type: 'natural-minor',
+        scaleType: 'natural-minor',
         tonic: 'Ab'
     })).toEqual({
         ascending: ['Ab', 'Bb', 'Cb', 'Db', 'Eb', 'Fb', 'Gb'],
-        type: 'natural-minor'
+        scaleType: 'natural-minor'
     })
 });
 
 
 test("builds an A natural minor scale as base, even when harmonic is specified", () => {
     expect(buildScale({
-        type: 'harmonic-minor',
+        scaleType: 'harmonic-minor',
         tonic: 'A'
     })).toEqual({
         ascending: ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
-        type: 'harmonic-minor'
+        scaleType: 'harmonic-minor'
     })
 });
 
 
 test("builds an Ab natural minor scale as base, even when harmonic is specified", () => {
     expect(buildScale({
-        type: 'harmonic-minor',
+        scaleType: 'harmonic-minor',
         tonic: 'Ab'
     })).toEqual({
         ascending: ['Ab', 'Bb', 'Cb', 'Db', 'Eb', 'Fb', 'Gb'],
-        type: 'harmonic-minor'
+        scaleType: 'harmonic-minor'
     })
 });
 
 test("builds a D# natural minor scale as base, even when harmonic is specified", () => {
     expect(buildScale({
-        type: 'harmonic-minor',
+        scaleType: 'harmonic-minor',
         tonic: 'D#'
     })).toEqual({
         ascending: ['D#', 'E#', 'F#', 'G#', 'A#', 'B', 'C#'],
-        type: 'harmonic-minor'
+        scaleType: 'harmonic-minor'
     })
 });
 
 
 test("builds a C natural minor scale as base, even when melodic is specified", () => {
     expect(buildScale({
-        type: 'melodic-minor',
+        scaleType: 'melodic-minor',
         tonic: 'C'
     })).toEqual({
         ascending: ['C', 'D', 'Eb', 'F', 'G', 'Ab', 'Bb'],
-        type: 'melodic-minor'
+        scaleType: 'melodic-minor'
     })
 });
 
 
 test("builds a D# natural minor scale as base, even when melodic is specified", () => {
     expect(buildScale({
-        type: 'melodic-minor',
+        scaleType: 'melodic-minor',
         tonic: 'D#'
     })).toEqual({
         ascending: ['D#', 'E#', 'F#', 'G#', 'A#', 'B', 'C#'],
-        type: 'melodic-minor'
+        scaleType: 'melodic-minor'
     })
 });
 
 
 test("builds a C major triad arpeggio", () => {
     expect(buildScale({
-        type: 'major-triad-arpeggio',
+        scaleType: 'major-triad-arpeggio',
         tonic: 'C'
     })).toEqual({
         ascending: ['C', 'E', 'G'],
-        type: 'major-triad-arpeggio'
+        scaleType: 'major-triad-arpeggio'
     })
 });
 
 test("builds a F# major triad arpeggio", () => {
     expect(buildScale({
-        type: 'major-triad-arpeggio',
+        scaleType: 'major-triad-arpeggio',
         tonic: 'F#'
     })).toEqual({
         ascending: ['F#', 'A#', 'C#'],
-        type: 'major-triad-arpeggio'
+        scaleType: 'major-triad-arpeggio'
     })
 });
 
 
 test("builds a F# minor triad arpeggio", () => {
     expect(buildScale({
-        type: 'minor-triad-arpeggio',
+        scaleType: 'minor-triad-arpeggio',
         tonic: 'F#'
     })).toEqual({
         ascending: ['F#', 'A', 'C#'],
-        type: 'minor-triad-arpeggio'
+        scaleType: 'minor-triad-arpeggio'
     })
 });
 

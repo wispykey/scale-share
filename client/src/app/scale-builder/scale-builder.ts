@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { ScaleBuilderService } from '../_services/scale-builder.service';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ScaleFormOptions } from '../../music-theory/types';
 
 @Component({
   selector: 'app-scale-builder',
@@ -15,16 +16,24 @@ export class ScaleBuilder {
 
   form = new FormGroup({
     tonic: new FormControl('C'),
-    scale: new FormControl('major'),
+    scaleType: new FormControl('major'),
+    initialRegister: new FormControl(4),
+    minNote: new FormControl({
+      name: 'Bb',
+      register: 3
+    }),
+    maxNote: new FormControl({
+      name: 'F#',
+      register: 6
+    }),
   });
 
 
 
   ngOnInit() {
-    this.form.setValue({ tonic: 'C', scale: 'major' });
     this.form.valueChanges.subscribe(values => {
       console.log('Form changed:', values);
-      // call your scale builder service here
+      this.builder.createScale(values as ScaleFormOptions);
     });
   }
 }

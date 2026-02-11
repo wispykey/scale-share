@@ -7,22 +7,22 @@ import { buildScale } from "../music-theory/build-scale";
 
 const cMajor: Scale = buildScale({
     tonic: 'C',
-    type: 'major'
+    scaleType: 'major'
 });
 
 const cMajorTriad: Scale = buildScale({
     tonic: 'C',
-    type: 'major-triad-arpeggio'
+    scaleType: 'major-triad-arpeggio'
 })
 
 const fSharpMajor: Scale = buildScale({
     tonic: 'F#',
-    type: 'major'
+    scaleType: 'major'
 });
 
 const aMelodicMinor: Scale = buildScale({
     tonic: 'A',
-    type: 'melodic-minor'
+    scaleType: 'melodic-minor'
 });
 
 test("should create C major one octave", () => {

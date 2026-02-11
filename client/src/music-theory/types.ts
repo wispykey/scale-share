@@ -22,7 +22,7 @@ export type PitchCollection = PitchName[];
 export type Scale = {
     ascending: PitchCollection,
     descending?: PitchCollection,
-    type: ScaleType
+    scaleType: ScaleType
 }
 
 export type ScaleType =
@@ -110,3 +110,19 @@ export type MinorScaleKey = keyof typeof MajorScaleNotes;
 
 export const TRIAD_SCALE_DEGREES_AS_INDICES = [0, 2, 4];
 export const SEVENTH_CHORD_SCALE_DEGREES_AS_INDICES = [0, 2, 4, 6];
+
+
+export interface ScaleOptions {
+    tonic: PitchName,
+    scaleType: ScaleType,
+}
+
+
+export interface ScaleExpansionOptions {
+    initialRegister: number,
+    minNote: Note,
+    maxNote: Note,
+    octaves?: number
+}
+
+export type ScaleFormOptions = ScaleOptions & ScaleExpansionOptions;

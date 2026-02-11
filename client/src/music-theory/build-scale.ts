@@ -1,11 +1,6 @@
 import { InvalidMajorKeyError, InvalidMinorKeyError } from "./errors";
-import { type PitchName, type Scale, type ScaleType, MajorScaleNotes, NaturalMinorScaleNotes, TRIAD_SCALE_DEGREES_AS_INDICES } from "./types";
+import { type PitchName, type Scale, type ScaleType, MajorScaleNotes, NaturalMinorScaleNotes, ScaleOptions, TRIAD_SCALE_DEGREES_AS_INDICES } from "./types";
 import { isMajorScaleKey, isMinorScaleKey } from "./utils";
-
-interface ScaleOptions {
-    tonic: PitchName,
-    type: ScaleType,
-}
 
 type ScaleBuilderFunction = (tonic: PitchName) => Scale;
 
@@ -24,7 +19,7 @@ function buildMajorTriadArpeggio(tonic: PitchName): Scale {
     if (!isMajorScaleKey(tonic)) throw new InvalidMajorKeyError(tonic);
     let scale: Scale = {
         ascending: MajorScaleNotes[tonic as keyof typeof MajorScaleNotes],
-        type: 'major-triad-arpeggio'
+        scaleType: 'major-triad-arpeggio'
     }
     scale.ascending = scale.ascending.filter((_value, index) => TRIAD_SCALE_DEGREES_AS_INDICES.includes(index));
     return scale;
@@ -34,7 +29,7 @@ function buildMinorTriadArpeggio(tonic: PitchName): Scale {
     if (!isMinorScaleKey(tonic)) throw new InvalidMinorKeyError(tonic);
     let scale: Scale = {
         ascending: NaturalMinorScaleNotes[tonic as keyof typeof NaturalMinorScaleNotes],
-        type: 'minor-triad-arpeggio'
+        scaleType: 'minor-triad-arpeggio'
     }
     scale.ascending = scale.ascending.filter((_value, index) => TRIAD_SCALE_DEGREES_AS_INDICES.includes(index));
     return scale;
@@ -44,7 +39,7 @@ function buildMajorScale(tonic: PitchName): Scale {
     if (!isMajorScaleKey(tonic)) throw new InvalidMajorKeyError(tonic);
     return {
         ascending: MajorScaleNotes[tonic as keyof typeof MajorScaleNotes],
-        type: 'major'
+        scaleType: 'major'
     }
 }
 
@@ -52,7 +47,7 @@ function buildHarmonicMinorScale(tonic: PitchName): Scale {
     if (!isMinorScaleKey(tonic)) throw new InvalidMinorKeyError(tonic);
     return {
         ascending: NaturalMinorScaleNotes[tonic as keyof typeof NaturalMinorScaleNotes],
-        type: 'harmonic-minor'
+        scaleType: 'harmonic-minor'
     }
 }
 
@@ -60,7 +55,7 @@ function buildMelodicMinorScale(tonic: PitchName): Scale {
     if (!isMinorScaleKey(tonic)) throw new InvalidMinorKeyError(tonic);
     return {
         ascending: NaturalMinorScaleNotes[tonic as keyof typeof NaturalMinorScaleNotes],
-        type: 'melodic-minor'
+        scaleType: 'melodic-minor'
     }
 }
 
@@ -69,10 +64,10 @@ function buildNaturalMinorScale(tonic: PitchName): Scale {
     if (!isMinorScaleKey(tonic)) throw new InvalidMinorKeyError(tonic);
     return {
         ascending: NaturalMinorScaleNotes[tonic as keyof typeof NaturalMinorScaleNotes],
-        type: 'natural-minor'
+        scaleType: 'natural-minor'
     }
 }
 
 export function buildScale(options: ScaleOptions): Scale {
-    return SCALE_BUILDER_STRATEGIES[options.type](options.tonic);
+    return SCALE_BUILDER_STRATEGIES[options.scaleType](options.tonic);
 }

@@ -1,13 +1,5 @@
-import type { Scale, Note } from "./types";
+import type { Scale, Note, ScaleExpansionOptions } from "./types";
 import { convertNoteToPitchNumber, convertPitchNameToPitchClass, modifyPitchName } from "./utils";
-
-
-interface ScaleExpansionOptions {
-    initialRegister: number,
-    minNote: Note,
-    maxNote: Note,
-    octaves?: number
-}
 
 function isNoteInRange(note: Note, minNote: Note, maxNote: Note): boolean {
     let minPitchNumber = convertNoteToPitchNumber(minNote);
@@ -40,7 +32,7 @@ function selectFirstNote(scale: Scale, initialRegister: number, minNote: Note, m
 }
 
 function applyScaleDegreeAlterations(scale: Scale, notes: Note[]) {
-    if (scale.type === 'harmonic-minor') {
+    if (scale.scaleType === 'harmonic-minor') {
         // raise all the sevenths
         for (let i = 0; i < notes.length; i++) {
             if (notes[i].name === scale.ascending[6]) {
@@ -48,7 +40,7 @@ function applyScaleDegreeAlterations(scale: Scale, notes: Note[]) {
             }
         }
     }
-    else if (scale.type === 'melodic-minor') {
+    else if (scale.scaleType === 'melodic-minor') {
         // raise all the sixths and sevenths, only when ascending
 
         // starting at second note (i = 1) is OK because we assume scales will always start on tonic; never on sixth/seventh
@@ -140,5 +132,6 @@ export function expandScale(scale: Scale, options: ScaleExpansionOptions): Note[
 
     applyScaleDegreeAlterations(scale, notes);
 
+    console.log(notes);
     return notes;
 }
