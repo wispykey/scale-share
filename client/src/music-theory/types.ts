@@ -112,7 +112,7 @@ export const TRIAD_SCALE_DEGREES_AS_INDICES = [0, 2, 4];
 export const SEVENTH_CHORD_SCALE_DEGREES_AS_INDICES = [0, 2, 4, 6];
 
 
-export interface ScaleOptions {
+export interface ScaleBaseOptions {
     tonic: PitchName,
     scaleType: ScaleType,
 }
@@ -125,4 +125,29 @@ export interface ScaleExpansionOptions {
     octaves?: number
 }
 
-export type ScaleFormOptions = ScaleOptions & ScaleExpansionOptions;
+export interface ScaleDetailOptions {
+    timeSignature: TimeSignature,
+    articulationPattern: Articulation[],
+    showKeySignature: boolean,
+    showExtraAccidentals: boolean,
+    rhythm: NoteDuration[]
+}
+
+export type ScaleFormOptions = ScaleBaseOptions & ScaleExpansionOptions & ScaleDetailOptions;
+
+
+export type Measure = Note[];
+export type Phrase = {
+    measures: Measure[],
+    tonic: PitchName,
+    scaleType: ScaleType,
+    timeSignature: TimeSignature,
+    showKeySignature: boolean,
+    showExtraAccidentals: boolean,
+    articulationPattern: Articulation[]
+}
+
+export type TimeSignature = {
+    numerator: number;
+    denominator: number;
+}
