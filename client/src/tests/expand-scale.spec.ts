@@ -15,6 +15,26 @@ const cMajorTriad: Scale = buildScale({
     scaleType: 'major-triad-arpeggio'
 })
 
+const cFlatMajor: Scale = buildScale({
+    tonic: 'Cb',
+    scaleType: 'major'
+});
+
+const cFlatMajorTriad: Scale = buildScale({
+    tonic: 'Cb',
+    scaleType: 'major-triad-arpeggio'
+});
+
+const aSharpMinor: Scale = buildScale({
+    tonic: 'A#',
+    scaleType: 'natural-minor'
+});
+
+const aSharpMinorTriad: Scale = buildScale({
+    tonic: 'A#',
+    scaleType: 'minor-triad-arpeggio'
+});
+
 const fSharpMajor: Scale = buildScale({
     tonic: 'F#',
     scaleType: 'major'
@@ -87,6 +107,36 @@ test("should create C major full range (large)", () => {
             D6 E6 F6 E6 D6 C6 \
             B5 A5 G5 F5 E5 D5 C5 \
             B4 A4 G4 F4 E4 D4 C4")
+    );
+});
+
+
+test("should create A# natural minor full range, using correct registers for B#", () => {
+    expect(expandScale(cMajor, {
+        initialRegister: 4,
+        minNote: note("C", 4),
+        maxNote: note("F", 6),
+    })).toEqual(
+        notes("A#4 B#4 C#5 D#5 E#5 F#5 G#5 \
+            A#5 B#5 C#6 D#6 E#6 \
+            D#6 C#6 B#5 A#5 \
+            G#5 F#5 E#5 D#5 C#5 B#4 A#4 \
+            G#4 F#4 E#4 D#4 C#4 B#3 \
+            C#4 D#4 E#4 F#4 G#4 A#4")
+    );
+});
+
+test("should create Cb major full range, using correct registers for Cb", () => {
+    expect(expandScale(cFlatMajor, {
+        initialRegister: 4,
+        minNote: note("Cb", 4),
+        maxNote: note("F", 6),
+    })).toEqual(
+        notes("Cb4 Db4 Eb4 Fb4 Gb4 Ab4 Bb4 Cb5 \
+            Db5 Eb5 Fb5 Gb5 Ab5 Bb5 Cb6 \
+            Db6 Eb6 Fb6 Eb6 Db6 Cb6 \
+            Bb5 Ab5 Gb5 Fb5 Eb5 Db5 Cb5 \
+            Bb4 Ab4 Gb4 Fb4 Eb4 Db4 Cb4")
     );
 });
 
@@ -302,3 +352,5 @@ test("should create a small, full-range C major arpeggio that goes below startin
         notes("C4 E4 G4 E4 C4 G3 C4")
     );
 });
+
+
