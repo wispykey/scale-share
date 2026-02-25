@@ -28,11 +28,11 @@ export class ScoreRendererService {
 
     render(options: ScaleFormOptions) {
         let phrase = createPhrase(options);
+        document.querySelector(`app-score`)!.innerHTML = '';
         this.renderScore('app-score', [phrase]);
     }
 
     renderScore(elementId: string, phrases: Phrase[]): void {
-        // removeChildSVGElements(document.querySelector(`div[id=${elementId}]`)!);
 
 
         const factory = new Factory({
