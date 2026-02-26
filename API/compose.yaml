@@ -1,0 +1,18 @@
+
+services:
+  postgres:
+    image: postgres:18.2
+    environment:
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - 5432:5432
+
+  pgadmin:
+    image: dpage/pgadmin4:9.12
+    environment:
+      PGADMIN_DEFAULT_EMAIL: pg@pg.db
+      PGADMIN_DEFAULT_PASSWORD: secret
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
+    ports: 
+      - 5050:80
