@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,6 +39,34 @@ app.MapGet("/data", (HttpContext httpContext) =>
 })
 .WithName("GetData")
 .RequireAuthorization();
+
+
+app.MapPost("/register", async (AddUserDTO user, UserManager<IdentityUser> userManager) =>
+{
+    var newUser = new IdentityUser
+    {
+        UserName = user.Name,
+        Email = user.Email,
+    };
+
+    var result = await userManager.CreateAsync(newUser, user.Password);
+
+    return result.Succeeded ? Results.Ok("Created new user") : Results.BadRequest(result.ToString());
+});
+
+
+app.MapPost("/login", async (LoginDTO login, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager) =>
+{
+    var user = await userManager.FindByNameAsync(login.Name);
+    if (user == null) return Results.BadRequest("Invalid login");
+
+    var isPasswordCorrect = await userManager.CheckPasswordAsync(user, login.Password);
+    if (!isPasswordCorrect) return Results.BadRequest("Invalid login");
+
+    await signInManager.SignInAsync(user, true);
+
+    return Results.Ok("Signed in!");
+});
 
 
 app.Run();
