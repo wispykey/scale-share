@@ -1,5 +1,5 @@
 import { InvalidMajorKeyError, InvalidMinorKeyError } from "./errors";
-import { type PitchName, type Scale, type ScaleType, MajorScaleNotes, NaturalMinorScaleNotes, ScaleOptions, TRIAD_SCALE_DEGREES_AS_INDICES } from "./types";
+import { type PitchName, type Scale, type ScaleType, MajorScaleNotes, NaturalMinorScaleNotes, ScaleBaseOptions, TRIAD_SCALE_DEGREES_AS_INDICES } from "./types";
 import { isMajorScaleKey, isMinorScaleKey } from "./utils";
 
 type ScaleBuilderFunction = (tonic: PitchName) => Scale;
@@ -68,6 +68,6 @@ function buildNaturalMinorScale(tonic: PitchName): Scale {
     }
 }
 
-export function buildScale(options: ScaleOptions): Scale {
+export function buildScale(options: ScaleBaseOptions): Scale {
     return SCALE_BUILDER_STRATEGIES[options.scaleType](options.tonic);
 }
