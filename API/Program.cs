@@ -68,5 +68,10 @@ app.MapPost("/login", async (LoginDTO login, UserManager<IdentityUser> userManag
     return Results.Ok("Signed in!");
 });
 
+app.MapPost("/logout", async (SignInManager<IdentityUser> signInManager) =>
+{
+    await signInManager.SignOutAsync();
+});
+
 
 app.Run();
