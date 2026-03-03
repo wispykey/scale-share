@@ -130,6 +130,5 @@ export function expandScale(scale: Scale, options: ScaleExpansionOptions): Note[
 
     applyScaleDegreeAlterations(scale, notes);
 
-    console.log(notes);
     return notes;
 }

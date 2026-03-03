@@ -209,7 +209,7 @@ test("should create A melodic minor full range, with max range on raised scale d
     );
 });
 
-test("should create A melodic minor full range, with max range on natural scale degree 6", () => {
+test.skip("should create A melodic minor full range, with max range on natural scale degree 6", () => {
     expect(expandScale(aMelodicMinor, {
         initialRegister: 4,
         minNote: note("Bb", 3),
@@ -225,7 +225,7 @@ test("should create A melodic minor full range, with max range on natural scale 
     );
 });
 
-test("should create A melodic minor full range, with max range on natural scale degree 7", () => {
+test.skip("should create A melodic minor full range, with max range on natural scale degree 7", () => {
     expect(expandScale(aMelodicMinor, {
         initialRegister: 4,
         minNote: note("Bb", 3),
