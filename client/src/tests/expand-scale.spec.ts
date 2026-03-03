@@ -25,7 +25,7 @@ const cFlatMajorTriad: Scale = buildScale({
     scaleType: 'major-triad-arpeggio'
 });
 
-const aSharpMinor: Scale = buildScale({
+const aSharpNaturalMinor: Scale = buildScale({
     tonic: 'A#',
     scaleType: 'natural-minor'
 });
@@ -112,7 +112,7 @@ test("should create C major full range (large)", () => {
 
 
 test("should create A# natural minor full range, using correct registers for B#", () => {
-    expect(expandScale(cMajor, {
+    expect(expandScale(aSharpNaturalMinor, {
         initialRegister: 4,
         minNote: note("C", 4),
         maxNote: note("F", 6),

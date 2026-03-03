@@ -1,5 +1,5 @@
-import type { Scale, Note, ScaleExpansionOptions } from "./types";
-import { convertNoteToPitchNumber, convertPitchNameToPitchClass, modifyPitchName } from "./utils";
+import type { Scale, Note, ScaleExpansionOptions, PitchCollection } from "./types";
+import { convertNoteToPitchNumber, convertPitchNameToPitchClass, findAscendingBoundaryIndex, modifyPitchName } from "./utils";
 
 function isNoteInRange(note: Note, minNote: Note, maxNote: Note): boolean {
     let minPitchNumber = convertNoteToPitchNumber(minNote);
@@ -67,6 +67,8 @@ function applyScaleDegreeAlterations(scale: Scale, notes: Note[]) {
     }
 }
 
+
+
 export function expandScale(scale: Scale, options: ScaleExpansionOptions): Note[] {
     // Surely there is a better way than setting 12 to be sufficiently large for 'full-range'
     let numOctaves: number = options.octaves ?? 12;
@@ -74,18 +76,21 @@ export function expandScale(scale: Scale, options: ScaleExpansionOptions): Note[
     // INVARIANT: notes.length > 0
     let notes: Note[] = [firstNote];
     let currRegister = firstNote.register;
+    let currScale = scale.ascending;
+    let scaleLength = currScale.length;
+
+    let ascendingBoundaryIndex = findAscendingBoundaryIndex(currScale);
+    let descendingBoundaryIndex = ((ascendingBoundaryIndex - 1) % scaleLength + scaleLength) % scaleLength;
 
     function addNotesInDirection(direction: 'up' | 'down', finalNote?: Note) {
         const ascending = direction === 'up';
-        const scaleLength = scale.ascending.length;
         // Find where we left off in the scale; not always exact begin/end of scale due to range restrictions
         let prevNote = notes.at(-1);
         let step = ascending ? 1 : scaleLength - 1;
-        let currScale = scale.ascending;
-        let start = (currScale.findIndex(n => n === prevNote!.name) + step) % currScale.length;
+        let start = (currScale.findIndex(n => n === prevNote!.name) + step) % scaleLength;
 
         for (let i = 0; i < numOctaves; i++) {
-            for (let j = 0; j < currScale.length; j++) {
+            for (let j = 0; j < scaleLength; j++) {
                 prevNote = notes.at(-1);
                 // Land on tonic at the end of full-range scale
                 if (finalNote && prevNote!.name === finalNote.name && prevNote!.register === finalNote.register) return;
@@ -93,17 +98,10 @@ export function expandScale(scale: Scale, options: ScaleExpansionOptions): Note[
                 let nextRegister = currRegister;
                 let nextIndex = (start + j * step) % scaleLength;
 
-                // Update register if boundary has been crossed
-                let currNotePitchClass = convertPitchNameToPitchClass(currScale[nextIndex]);
-                let prevNotePitchClass = convertPitchNameToPitchClass(prevNote!.name);
-                if (ascending) {
-                    if (currNotePitchClass < prevNotePitchClass) {
-                        nextRegister += 1;
-                    }
-                } else {
-                    if (currNotePitchClass > prevNotePitchClass) {
-                        nextRegister -= 1;
-                    }
+                if (ascending && nextIndex == ascendingBoundaryIndex) {
+                    nextRegister++;
+                } else if (!ascending && nextIndex == descendingBoundaryIndex) {
+                    nextRegister--;
                 }
 
                 let nextNote = {

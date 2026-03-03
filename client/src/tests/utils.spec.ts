@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import { convertNoteToPitchNumber, convertPitchNameToPitchClass, convertPitchNumberToNote, getPitchNameFromInterval, note, notes } from '../music-theory/utils'
+import { convertNoteToPitchNumber, convertPitchNameToPitchClass, convertPitchNumberToNote, findAscendingBoundaryIndex, getPitchNameFromInterval, note, notes } from '../music-theory/utils'
 
 
 test("convert C4 to pitch number", () => {
@@ -190,3 +190,67 @@ test("compute correct augmented intervals away from F#", () => {
 test("throw error on invalid intervals", () => {
 
 });
+
+test("should find index of C when it is the first note of arpeggio", () => {
+    expect(findAscendingBoundaryIndex(['C', 'E', 'G'])).toEqual(0);
+});
+
+test("should find index of C when it is the first note of scale", () => {
+    expect(findAscendingBoundaryIndex(['C', 'D', 'E', 'F', 'G', 'A', 'B'])).toEqual(0);
+});
+
+test("should find index of C when it the last note of scale", () => {
+    expect(findAscendingBoundaryIndex(['D', 'E', 'F', 'G', 'A', 'Bb', 'C'])).toEqual(6);
+});
+
+test("should find index of C when it is a middle note of scale", () => {
+    expect(findAscendingBoundaryIndex(['F', 'G', 'A', 'Bb', 'C', 'D', 'E'])).toEqual(4);
+});
+
+
+test("should find index of F in a collection without pitch class 0", () => {
+    expect(findAscendingBoundaryIndex(['E', 'G', 'B'])).toEqual(0);
+});
+
+test("should find index of D in a collection without pitch class 0", () => {
+    expect(findAscendingBoundaryIndex(['B', 'D', 'F#'])).toEqual(1);
+});
+
+test("should find index of F in a collection without pitch class 0", () => {
+    expect(findAscendingBoundaryIndex(['G', 'B', 'D'])).toEqual(2);
+});
+
+
+
+
+// Cb should trigger a register change, despite its pitch class belonging to the previous octave (pitch class 11)
+test("should find index of Cb when it is the first note of arpeggio", () => {
+    expect(findAscendingBoundaryIndex(['Cb', 'E', 'G'])).toEqual(0);
+});
+
+test("should find index of Cb when it is the first note of scale", () => {
+    expect(findAscendingBoundaryIndex(['Cb', 'Db', 'Eb', 'Fb', 'Gb', 'Ab', 'Bb'])).toEqual(0);
+});
+
+test("should find index of Cb when it the last note of scale", () => {
+    expect(findAscendingBoundaryIndex(['Db', 'Eb', 'Fb', 'Gb', 'Ab', 'Bb', 'Cb'])).toEqual(6);
+});
+
+test("should find index of Cb when it is a middle note of scale", () => {
+    expect(findAscendingBoundaryIndex(['Eb', 'Fb', 'Gb', 'Ab', 'Bb', 'Cb', 'Db'])).toEqual(5);
+});
+
+
+// B# should not trigger a register change, despite its pitch class belonging to the next octave (pitch class 0)
+test("should find index of the note after B# when it is the first note of arpeggio", () => {
+    expect(findAscendingBoundaryIndex(['B#', 'D#', 'F#'])).toEqual(1);
+});
+
+test("should find index 0 as wraparound when B# is the last note of scale", () => {
+    expect(findAscendingBoundaryIndex(['C#', 'D#', 'E', 'F#', 'G#', 'A#', 'B#'])).toEqual(0);
+});
+
+test("should find index of the note after B# when it is a middle note of scale", () => {
+    expect(findAscendingBoundaryIndex(['F#', 'G#', 'A#', 'B#', 'D', 'E'])).toEqual(4);
+});
+

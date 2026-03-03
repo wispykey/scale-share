@@ -1,4 +1,4 @@
-import { type Accidental, type PitchName, type PitchLetter, type Note, type Interval, NaturalMinorScaleNotes, MajorScaleNotes, Accidentals, type MajorScaleKey, type MinorScaleKey } from "./types";
+import { type Accidental, type PitchName, type PitchLetter, type Note, type Interval, NaturalMinorScaleNotes, MajorScaleNotes, Accidentals, type MajorScaleKey, type MinorScaleKey, PitchCollection } from "./types";
 
 export function splitPitchName(pitchName: PitchName): [PitchLetter, Accidental] {
     // Is there a better way to handle this? Is it worth making PitchClass its own typed object with fields?
@@ -153,4 +153,33 @@ export function isMajorScaleKey(value: string): value is MajorScaleKey {
 
 export function isMinorScaleKey(value: string): value is MinorScaleKey {
     return value in NaturalMinorScaleNotes;
+}
+
+
+export function findAscendingBoundaryIndex(scale: PitchCollection): number {
+    let ascendingBoundaryIndex = 0;
+
+    // If scale starts on a Cb, it must be the boundary
+    if (scale[0] == 'Cb') return 0;
+
+    // Since register is dictated by note name, (i.e. pitch number 60: B# -> B#3, but C -> C4)
+    // we cannot always use pitch-class to determine the correct index
+    // So, we must handle the edge cases separately first (which may happen at any point within the scale)
+    for (let i = 1; i < scale.length; i++) {
+        // If we arrive on a Cb, we have found the boundary (register increases)
+        if (scale[i] == 'Cb') return i;
+        // If we came from a B#, the next note should always be the boundary (register increases)
+        if (scale[i - 1] == 'B#') return i;
+        // If we arrive on a B#, nothing happens (register stays the same)
+
+        // We are never dealing with a Cb or B# at this point
+        // So we can use modular arithmetic for remaining cases
+        let currNotePitchClass = convertPitchNameToPitchClass(scale[i]);
+        let prevNotePitchClass = convertPitchNameToPitchClass(scale[i - 1]);
+        if (scale[i] != 'B#' && currNotePitchClass < prevNotePitchClass) {
+            return i;
+        }
+    }
+
+    return ascendingBoundaryIndex;
 }
