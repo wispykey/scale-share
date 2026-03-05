@@ -5,7 +5,7 @@ import { Interval, Measure, Note, NoteDuration, NoteDurations, Scale, TimeSignat
 const QUARTER_NOTE_TICKS: number = 60;
 const FALLBACK_FILL_DURATION: NoteDuration = '16';
 
-export function applyTraversalPattern(notes: Note[], pattern: Interval[], scale: Scale, minNote: Note, maxNote: Note) {
+export function applyTraversalPattern(notes: Note[], pattern: number[], scale: Scale, minNote: Note, maxNote: Note) {
     return notes;
 }
 
