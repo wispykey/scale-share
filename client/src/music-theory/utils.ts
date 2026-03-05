@@ -76,6 +76,11 @@ export function notes(noteString: string): Note[] {
         });
 }
 
+export function notesStringFromArray(notes: Note[]) {
+    return notes.reduce((acc, note, i) => { return acc + `${note.name}${note.register}` + (i === notes.length - 1 ? "" : " ") }, "");
+}
+
+
 export function modifyPitchName(mode: 'raise' | 'lower', pitchName: PitchName): PitchName {
 
     const naturalIndex = Accidentals.findIndex(a => a === '');
