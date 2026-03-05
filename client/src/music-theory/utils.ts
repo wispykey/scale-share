@@ -183,3 +183,12 @@ export function findAscendingBoundaryIndex(scale: PitchCollection): number {
 
     return ascendingBoundaryIndex;
 }
+
+
+export function isNoteInRange(note: Note, minNote: Note, maxNote: Note): boolean {
+    let minPitchNumber = convertNoteToPitchNumber(minNote);
+    let maxPitchNumber = convertNoteToPitchNumber(maxNote);
+    let notePitchNumber = convertNoteToPitchNumber(note);
+    return notePitchNumber <= maxPitchNumber && notePitchNumber >= minPitchNumber;
+}
+
