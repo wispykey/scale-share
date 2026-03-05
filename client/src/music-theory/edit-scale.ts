@@ -1,12 +1,74 @@
 
 import { Interval, Measure, Note, NoteDuration, NoteDurations, Scale, TimeSignature } from "./types";
+import { convertNoteToPitchNumber, isNoteInRange } from "./utils";
 
 
 const QUARTER_NOTE_TICKS: number = 60;
 const FALLBACK_FILL_DURATION: NoteDuration = '16';
 
 export function applyTraversalPattern(notes: Note[], pattern: number[], scale: Scale, minNote: Note, maxNote: Note) {
-    return notes;
+    let newNotes: Note[] = [];
+    let scaleLength = scale.ascending.length;
+
+    for (let i = 0; i < notes.length - 1; i++) {
+        let curr = notes[i];
+
+
+        // Always include base note; an empty traversal pattern should result in a 'regular' scale
+        let patternNotes: Note[] = [curr];
+
+        // Derive direction (ascending/descending encoded as +1/-1)
+        let direction = 1;
+        if (i - 1 >= 0 && convertNoteToPitchNumber(curr) < convertNoteToPitchNumber(notes[i - 1])) {
+            direction = -1;
+        }
+
+        let currScale = direction == 1 ? scale.ascending : (scale.descending ? scale.descending : scale.ascending);
+
+        // Find where we are in the scale
+        let originalScaleIndex = currScale.findIndex((noteName) => curr.name === noteName);
+        if (originalScaleIndex < 0) {
+            console.error(`Note ${curr.name} does not belong to scale ${scale}. Aborting traversal pattern application`);
+            return notes;
+        }
+
+        let scaleIndexOfNewNote = originalScaleIndex;
+        let newRegister = curr.register;
+
+        for (let interval of pattern) {
+            // Need to walk through the interval step-by-step to identify register changes across B/C
+            // We can't just compare pitch numbers because an 'interval' is defined in scale steps, not semitones
+            for (let j = 1; j < interval + 1; j++) {
+                let noteNameOnPath = currScale[((scaleIndexOfNewNote + direction * j) % scaleLength + scaleLength) % scaleLength];
+                if (direction > 0 && noteNameOnPath.charAt(0) === 'C') {
+                    newRegister++;
+                    break;
+                } else if (direction < 0 && noteNameOnPath.charAt(0) === 'B') {
+                    newRegister--;
+                    break;
+                }
+            }
+
+            scaleIndexOfNewNote = ((scaleIndexOfNewNote + direction * interval) % scaleLength + scaleLength) % scaleLength;
+            let newNote: Note = {
+                name: currScale[scaleIndexOfNewNote],
+                register: newRegister,
+            };
+
+            if (!isNoteInRange(newNote, minNote, maxNote)) {
+                // Pattern, including base note, should be skipped if any note goes out of range
+                // We want all pattern instances to be complete; no truncation
+                patternNotes = [];
+                break;
+            }
+            patternNotes.push(newNote);
+        }
+        newNotes = newNotes.concat(patternNotes);
+    };
+
+    newNotes.push(notes[notes.length - 1]);
+
+    return newNotes;
 }
 
 export function addRhythms(notes: Note[], rhythm: NoteDuration[]): Note[] {
