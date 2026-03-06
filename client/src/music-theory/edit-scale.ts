@@ -9,10 +9,28 @@ const FALLBACK_FILL_DURATION: NoteDuration = '16';
 export function applyTraversalPattern(notes: Note[], pattern: number[], scale: Scale, minNote: Note, maxNote: Note) {
     let newNotes: Note[] = [];
     let scaleLength = scale.ascending.length;
+    let isInvertedWhileDescending = true;
+
+    // Prepare to refactor to use generate scale ranged as limits rather than instrument range
+    // Use coupled number fields instead of notes because '200' and '-1' do not have valid note names, but are needed for safe initialization
+    let minPitchNumber = 200;
+    let maxPitchNumber = -1;
+
+    for (let note of notes) {
+        let pitchNumber = convertNoteToPitchNumber(note);
+        if (pitchNumber < minPitchNumber) {
+            minPitchNumber = pitchNumber;
+            // Override provided note parameter intentionally; parameters will be removed 
+            minNote = note;
+        }
+        if (pitchNumber > maxPitchNumber) {
+            maxPitchNumber = pitchNumber;
+            maxNote = note;
+        }
+    }
 
     for (let i = 0; i < notes.length - 1; i++) {
         let curr = notes[i];
-
 
         // Always include base note; an empty traversal pattern should result in a 'regular' scale
         let patternNotes: Note[] = [curr];
@@ -38,12 +56,15 @@ export function applyTraversalPattern(notes: Note[], pattern: number[], scale: S
         for (let interval of pattern) {
             // Need to walk through the interval step-by-step to identify register changes across B/C
             // We can't just compare pitch numbers because an 'interval' is defined in scale steps, not semitones
-            for (let j = 1; j < interval + 1; j++) {
-                let noteNameOnPath = currScale[((scaleIndexOfNewNote + direction * j) % scaleLength + scaleLength) % scaleLength];
-                if (direction > 0 && noteNameOnPath.charAt(0) === 'C') {
+
+            for (let j = 1; j < Math.abs(interval) + 1; j++) {
+                // Intervals may be ascending/descending themselves, so they may 'cancel out' against scale's general direction
+                let intervalDirection = interval > 0 ? 1 : -1;
+                let noteNameOnPath = currScale[((scaleIndexOfNewNote + direction * j * intervalDirection) % scaleLength + scaleLength) % scaleLength];
+                if (intervalDirection * direction > 0 && noteNameOnPath.charAt(0) === 'C') {
                     newRegister++;
                     break;
-                } else if (direction < 0 && noteNameOnPath.charAt(0) === 'B') {
+                } else if (intervalDirection * direction < 0 && noteNameOnPath.charAt(0) === 'B') {
                     newRegister--;
                     break;
                 }
@@ -56,7 +77,7 @@ export function applyTraversalPattern(notes: Note[], pattern: number[], scale: S
             };
 
             if (!isNoteInRange(newNote, minNote, maxNote)) {
-                // Pattern, including base note, should be skipped if any note goes out of range
+                // The entire pattern (including base note), should be skipped if any note goes out of range
                 // We want all pattern instances to be complete; no truncation
                 patternNotes = [];
                 break;
@@ -66,6 +87,7 @@ export function applyTraversalPattern(notes: Note[], pattern: number[], scale: S
         newNotes = newNotes.concat(patternNotes);
     };
 
+    // Add tonic at the end. This assumes that final note in expanded scale was the tonic
     newNotes.push(notes[notes.length - 1]);
 
     return newNotes;
