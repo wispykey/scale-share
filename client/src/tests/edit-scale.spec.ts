@@ -63,7 +63,8 @@ test('zero in the middle of pattern', () => {
     const notes = applyTraversalPattern(cMajorOneOctave, [1, 0], cMajor, note("C", 4), note("C", 5));
     expect(notesStringFromArray(notes)).toEqual(
         "C4 D4 D4 D4 E4 E4 E4 F4 F4 F4 G4 G4 G4 A4 A4 A4 B4 B4 B4 C5 C5 " +
-        "C5 B4 B4 B4 A4 A4 A4 G4 G4 G4 F4 F4 F4 E4 E4 E4 D4 D4 D4 C4 C4 C4"
+        // + "C5 B4 B4 " decided to remove descending pattern from max range note for now
+        "B4 A4 A4 A4 G4 G4 G4 F4 F4 F4 E4 E4 E4 D4 D4 D4 C4 C4 C4"
     );
 });
 
