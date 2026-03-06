@@ -76,6 +76,11 @@ export function notes(noteString: string): Note[] {
         });
 }
 
+export function notesStringFromArray(notes: Note[]) {
+    return notes.reduce((acc, note, i) => { return acc + `${note.name}${note.register}` + (i === notes.length - 1 ? "" : " ") }, "");
+}
+
+
 export function modifyPitchName(mode: 'raise' | 'lower', pitchName: PitchName): PitchName {
 
     const naturalIndex = Accidentals.findIndex(a => a === '');
@@ -183,3 +188,12 @@ export function findAscendingBoundaryIndex(scale: PitchCollection): number {
 
     return ascendingBoundaryIndex;
 }
+
+
+export function isNoteInRange(note: Note, minNote: Note, maxNote: Note): boolean {
+    let minPitchNumber = convertNoteToPitchNumber(minNote);
+    let maxPitchNumber = convertNoteToPitchNumber(maxNote);
+    let notePitchNumber = convertNoteToPitchNumber(note);
+    return notePitchNumber <= maxPitchNumber && notePitchNumber >= minPitchNumber;
+}
+

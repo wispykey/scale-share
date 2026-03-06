@@ -1,12 +1,5 @@
 import type { Scale, Note, ScaleExpansionOptions, PitchCollection } from "./types";
-import { convertNoteToPitchNumber, convertPitchNameToPitchClass, findAscendingBoundaryIndex, modifyPitchName } from "./utils";
-
-function isNoteInRange(note: Note, minNote: Note, maxNote: Note): boolean {
-    let minPitchNumber = convertNoteToPitchNumber(minNote);
-    let maxPitchNumber = convertNoteToPitchNumber(maxNote);
-    let notePitchNumber = convertNoteToPitchNumber(note);
-    return notePitchNumber <= maxPitchNumber && notePitchNumber >= minPitchNumber;
-}
+import { convertNoteToPitchNumber, convertPitchNameToPitchClass, findAscendingBoundaryIndex, isNoteInRange, modifyPitchName } from "./utils";
 
 
 
