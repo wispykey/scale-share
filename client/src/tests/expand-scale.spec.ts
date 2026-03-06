@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import type { Scale } from "../music-theory/types";
+import { MajorScaleKeys, MajorScales, MinorScaleKeys, NaturalMinorScales, type Scale } from "../music-theory/types";
 import { expandScale } from "../music-theory/expand-scale";
 import { note, notes } from "../music-theory/utils";
 import { buildScale } from "../music-theory/build-scale";
@@ -45,17 +45,224 @@ const aMelodicMinor: Scale = buildScale({
     scaleType: 'melodic-minor'
 });
 
-test("should create C major one octave", () => {
-    expect(expandScale(cMajor, {
-        initialRegister: 4,
-        minNote: note("C", 4),
-        maxNote: note("B", 7), // set 'maxNote' deliberately high so that 'octaves' restricts range
-        octaves: 1
-    })).toEqual(
-        notes("C4 D4 E4 F4 G4 A4 B4 C5 \
-            B4 A4 G4 F4 E4 D4 C4")
-    );
-});
+
+// cross product vraiables:
+// key (loop)
+// octaves: 1, 2, or full-range
+// range: exactly 1 octave, 2 octave, less than one octave (five notes min), saxophone range, hearing range
+// initial register: keep constant for now
+
+
+// looping while a restrictive range stays constant will be problematic
+// because the number and placement of expected notes will vary..
+
+
+const oneOctaveCases = {
+    'C': notes("C4 D4 E4 F4 G4 A4 B4 C5 B4 A4 G4 F4 E4 D4 C4"),
+    'C#': notes("C#4 D#4 E#4 F#4 G#4 A#4 B#4 C#5 B#4 A#4 G#4 F#4 E#4 D#4 C#4"),
+    'Db': notes("Db4 Eb4 F4 Gb4 Ab4 Bb4 C5 Db5 C5 Bb4 Ab4 Gb4 F4 Eb4 Db4"),
+    'D': notes("D4 E4 F#4 G4 A4 B4 C#5 D5 C#5 B4 A4 G4 F#4 E4 D4"),
+    'Eb': notes("Eb4 F4 G4 Ab4 Bb4 C5 D5 Eb5 D5 C5 Bb4 Ab4 G4 F4 Eb4"),
+    'E': notes("E4 F#4 G#4 A4 B4 C#5 D#5 E5 D#5 C#5 B4 A4 G#4 F#4 E4"),
+    'F': notes("F4 G4 A4 Bb4 C5 D5 E5 F5 E5 D5 C5 Bb4 A4 G4 F4"),
+    'F#': notes("F#4 G#4 A#4 B4 C#5 D#5 E#5 F#5 E#5 D#5 C#5 B4 A#4 G#4 F#4"),
+    'Gb': notes("Gb4 Ab4 Bb4 Cb5 Db5 Eb5 F5 Gb5 F5 Eb5 Db5 Cb5 Bb4 Ab4 Gb4"),
+    'G': notes("G4 A4 B4 C5 D5 E5 F#5 G5 F#5 E5 D5 C5 B4 A4 G4"),
+    'Ab': notes("Ab4 Bb4 C5 Db5 Eb5 F5 G5 Ab5 G5 F5 Eb5 Db5 C5 Bb4 Ab4"),
+    'A': notes("A4 B4 C#5 D5 E5 F#5 G#5 A5 G#5 F#5 E5 D5 C#5 B4 A4"),
+    'Bb': notes("Bb4 C5 D5 Eb5 F5 G5 A5 Bb5 A5 G5 F5 Eb5 D5 C5 Bb4"),
+    'B': notes("B4 C#5 D#5 E5 F#5 G#5 A#5 B5 A#5 G#5 F#5 E5 D#5 C#5 B4"),
+    'Cb': notes("Cb4 Db4 Eb4 Fb4 Gb4 Ab4 Bb4 Cb5 Bb4 Ab4 Gb4 Fb4 Eb4 Db4 Cb4"),
+}
+
+const oneOctaveUpperRangeTruncationCases = {
+    'C': notes("C4 D4 E4 F4 G4 A4 B4 C5 B4 A4 G4 F4 E4 D4 C4"),
+    'C#': notes("C#4 D#4 E#4 F#4 G#4 A#4 B#4 A#4 G#4 F#4 E#4 D#4 C#4"),
+    'Db': notes("Db4 Eb4 F4 Gb4 Ab4 Bb4 C5 Bb4 Ab4 Gb4 F4 Eb4 Db4"),
+    'D': notes("D4 E4 F#4 G4 A4 B4 A4 G4 F#4 E4 D4"),
+    'Eb': notes("Eb4 F4 G4 Ab4 Bb4 C5 Bb4 Ab4 G4 F4 Eb4"),
+    'E': notes("E4 F#4 G#4 A4 B4 A4 G#4 F#4 E4"),
+    'F': notes("F4 G4 A4 Bb4 C5 Bb4 A4 G4 F4"),
+    'F#': notes("F#4 G#4 A#4 B4 A#4 G#4 F#4"),
+    'Gb': notes("Gb4 Ab4 Bb4 Cb5 Bb4 Ab4 Gb4"),
+    'G': notes("G4 A4 B4 C5 B4 A4 G4"),
+    'Ab': notes("Ab4 Bb4 C5 Bb4 Ab4"),
+    'A': notes("A4 B4 A4"),
+    'Bb': notes("Bb4 C5 Bb4"),
+    'B': notes("B4"),
+    'Cb': notes("Cb4 Db4 Eb4 Fb4 Gb4 Ab4 Bb4 Cb5 Bb4 Ab4 Gb4 Fb4 Eb4 Db4 Cb4"),
+}
+
+const oneOctaveNaturalMinorCases = {
+    'A': notes("A4 B4 C5 D5 E5 F5 G5 A5 G5 F5 E5 D5 C5 B4 A4"),
+    'A#': notes("A#4 B#4 C#5 D#5 E#5 F#5 G#5 A#5 G#5 F#5 E#5 D#5 C#5 B#4 A#4"),
+    'Bb': notes("Bb4 C5 Db5 Eb5 F5 Gb5 Ab5 Bb5 Ab5 Gb5 F5 Eb5 Db5 C5 Bb4"),
+    'B': notes("B4 C#5 D5 E5 F#5 G5 A5 B5 A5 G5 F#5 E5 D5 C#5 B4"),
+    'C': notes("C4 D4 Eb4 F4 G4 Ab4 Bb4 C5 Bb4 Ab4 G4 F4 Eb4 D4 C4"),
+    'C#': notes("C#4 D#4 E4 F#4 G#4 A4 B4 C#5 B4 A4 G#4 F#4 E4 D#4 C#4"),
+    'D': notes("D4 E4 F4 G4 A4 Bb4 C5 D5 C5 Bb4 A4 G4 F4 E4 D4"),
+    'D#': notes("D#4 E#4 F#4 G#4 A#4 B4 C#5 D#5 C#5 B4 A#4 G#4 F#4 E#4 D#4"),
+    'Eb': notes("Eb4 F4 Gb4 Ab4 Bb4 Cb5 Db5 Eb5 Db5 Cb5 Bb4 Ab4 Gb4 F4 Eb4"),
+    'E': notes("E4 F#4 G4 A4 B4 C5 D5 E5 D5 C5 B4 A4 G4 F#4 E4"),
+    'F': notes("F4 G4 Ab4 Bb4 C5 Db5 Eb5 F5 Eb5 Db5 C5 Bb4 Ab4 G4 F4"),
+    'F#': notes("F#4 G#4 A4 B4 C#5 D5 E5 F#5 E5 D5 C#5 B4 A4 G#4 F#4"),
+    'G': notes("G4 A4 Bb4 C5 D5 Eb5 F5 G5 F5 Eb5 D5 C5 Bb4 A4 G4"),
+    'G#': notes("G#4 A#4 B4 C#5 D#5 E5 F#5 G#5 F#5 E5 D#5 C#5 B4 A#4 G#4"),
+    'Ab': notes("Ab4 Bb4 Cb5 Db5 Eb5 Fb5 Gb5 Ab5 Gb5 Fb5 Eb5 Db5 Cb5 Bb4 Ab4"),
+}
+
+
+const oneOctaveNaturalMinorUpperRangeTruncationCases = {
+    'A': notes("A4 B4 C5 B4 A4"),
+    'A#': notes("A#4 B#4 A#4"),
+    'Bb': notes("Bb4 C5 Bb4"),
+    'B': notes("B4"),
+    'C': notes("C4 D4 Eb4 F4 G4 Ab4 Bb4 C5 Bb4 Ab4 G4 F4 Eb4 D4 C4"),
+    'C#': notes("C#4 D#4 E4 F#4 G#4 A4 B4 A4 G#4 F#4 E4 D#4 C#4"),
+    'D': notes("D4 E4 F4 G4 A4 Bb4 C5 Bb4 A4 G4 F4 E4 D4"),
+    'D#': notes("D#4 E#4 F#4 G#4 A#4 B4 A#4 G#4 F#4 E#4 D#4"),
+    'Eb': notes("Eb4 F4 Gb4 Ab4 Bb4 Cb5 Bb4 Ab4 Gb4 F4 Eb4"),
+    'E': notes("E4 F#4 G4 A4 B4 C5 B4 A4 G4 F#4 E4"),
+    'F': notes("F4 G4 Ab4 Bb4 C5  Bb4 Ab4 G4 F4"),
+    'F#': notes("F#4 G#4 A4 B4 A4 G#4 F#4"),
+    'G': notes("G4 A4 Bb4 C5 Bb4 A4 G4"),
+    'G#': notes("G#4 A#4 B4 A#4 G#4"),
+    'Ab': notes("Ab4 Bb4 Cb5 Bb4 Ab4"),
+}
+
+
+const oneOctaveMelodicMinorCases = {
+    'A': notes("A4 B4 C5 D5 E5 F#5 G#5 A5 G5 F5 E5 D5 C5 B4 A4"),
+    'A#': notes("A#4 B#4 C#5 D#5 E#5 F##5 G##5 A#5 G#5 F#5 E#5 D#5 C#5 B#4 A#4"),
+    'Bb': notes("Bb4 C5 Db5 Eb5 F5 G5 A5 Bb5 Ab5 Gb5 F5 Eb5 Db5 C5 Bb4"),
+    'B': notes("B4 C#5 D5 E5 F#5 G#5 A#5 B5 A5 G5 F#5 E5 D5 C#5 B4"),
+    'C': notes("C4 D4 Eb4 F4 G4 A4 B4 C5 Bb4 Ab4 G4 F4 Eb4 D4 C4"),
+    'C#': notes("C#4 D#4 E4 F#4 G#4 A#4 B#4 C#5 B4 A4 G#4 F#4 E4 D#4 C#4"),
+    'D': notes("D4 E4 F4 G4 A4 B4 C#5 D5 C5 Bb4 A4 G4 F4 E4 D4"),
+    'D#': notes("D#4 E#4 F#4 G#4 A#4 B#4 C##5 D#5 C#5 B4 A#4 G#4 F#4 E#4 D#4"),
+    'Eb': notes("Eb4 F4 Gb4 Ab4 Bb4 C5 D5 Eb5 Db5 Cb5 Bb4 Ab4 Gb4 F4 Eb4"),
+    'E': notes("E4 F#4 G4 A4 B4 C#5 D#5 E5 D5 C5 B4 A4 G4 F#4 E4"),
+    'F': notes("F4 G4 Ab4 Bb4 C5 D5 E5 F5 Eb5 Db5 C5 Bb4 Ab4 G4 F4"),
+    'F#': notes("F#4 G#4 A4 B4 C#5 D#5 E#5 F#5 E5 D5 C#5 B4 A4 G#4 F#4"),
+    'G': notes("G4 A4 Bb4 C5 D5 E5 F#5 G5 F5 Eb5 D5 C5 Bb4 A4 G4"),
+    'G#': notes("G#4 A#4 B4 C#5 D#5 E#5 F##5 G#5 F#5 E5 D#5 C#5 B4 A#4 G#4"),
+    'Ab': notes("Ab4 Bb4 Cb5 Db5 Eb5 F5 G5 Ab5 Gb5 Fb5 Eb5 Db5 Cb5 Bb4 Ab4"),
+}
+
+
+const oneOctaveMelodicMinorUpperRangeTruncationCases = {
+    'A': notes("A4 B4 C5 B4 A4"),
+    'A#': notes("A#4 B#4 A#4"),
+    'Bb': notes("Bb4 C5 Bb4"),
+    'B': notes("B4"),
+    'C': notes("C4 D4 Eb4 F4 G4 A4 B4 C5 Bb4 Ab4 G4 F4 Eb4 D4 C4"),
+    'C#': notes("C#4 D#4 E4 F#4 G#4 A#4 B#4 A#4 G#4 F#4 E4 D#4 C#4"),
+    'D': notes("D4 E4 F4 G4 A4 B4 A4 G4 F4 E4 D4"),
+    'D#': notes("D#4 E#4 F#4 G#4 A#4 B#4 A#4 G#4 F#4 E#4 D#4"),
+    'Eb': notes("Eb4 F4 Gb4 Ab4 Bb4 C5 Bb4 Ab4 Gb4 F4 Eb4"),
+    'E': notes("E4 F#4 G4 A4 B4 A4 G4 F#4 E4"),
+    'F': notes("F4 G4 Ab4 Bb4 C5 Bb4 Ab4 G4 F4"),
+    'F#': notes("F#4 G#4 A4 B4 A4 G#4 F#4"),
+    'G': notes("G4 A4 Bb4 C5 Bb4 A4 G4"),
+    'G#': notes("G#4 A#4 B4 A#4 G#4"),
+    'Ab': notes("Ab4 Bb4 Cb5 Bb4 Ab4"),
+}
+
+
+for (const key of MajorScaleKeys) {
+    test(`${key} major scale, one octave`, () => {
+        let scale: Scale = { ascending: MajorScales[key], scaleType: 'major' };
+        expect(expandScale(scale, {
+            initialRegister: 4,
+            minNote: note("C", 0),
+            maxNote: note("C", 8),
+            octaves: 1
+        })).toEqual(oneOctaveCases[key]);
+    });
+}
+
+
+
+for (const key of MajorScaleKeys) {
+    test(`${key} major scale, one octave with upper range truncation`, () => {
+        let scale: Scale = { ascending: MajorScales[key], scaleType: 'major' };
+        expect(expandScale(scale, {
+            initialRegister: 4,
+            minNote: note("C", 0),
+            maxNote: note("C", 5),
+            octaves: 1
+        })).toEqual(oneOctaveUpperRangeTruncationCases[key]);
+    });
+}
+
+for (const key of MinorScaleKeys) {
+    test(`${key} natural minor scale, one octave`, () => {
+        let scale: Scale = { ascending: NaturalMinorScales[key], scaleType: 'natural-minor' };
+        expect(expandScale(scale, {
+            initialRegister: 4,
+            minNote: note("A", 0),
+            maxNote: note("A", 8),
+            octaves: 1
+        })).toEqual(oneOctaveNaturalMinorCases[key]);
+    });
+}
+
+
+
+for (const key of MinorScaleKeys) {
+    test(`${key} natural minor scale, one octave with upper range truncation`, () => {
+        let scale: Scale = { ascending: NaturalMinorScales[key], scaleType: 'natural-minor' };
+        expect(expandScale(scale, {
+            initialRegister: 4,
+            minNote: note("A", 1),
+            maxNote: note("C", 5),
+            octaves: 1
+        })).toEqual(oneOctaveNaturalMinorUpperRangeTruncationCases[key]);
+    });
+}
+
+
+for (const key of MinorScaleKeys) {
+    test(`${key} melodic minor scale, one octave`, () => {
+        let scale: Scale = { ascending: NaturalMinorScales[key], scaleType: 'melodic-minor' };
+        expect(expandScale(scale, {
+            initialRegister: 4,
+            minNote: note("A", 0),
+            maxNote: note("A", 8),
+            octaves: 1
+        })).toEqual(oneOctaveMelodicMinorCases[key]);
+    });
+}
+
+
+const edgeCaseDescriptions: Record<string, string> = {
+    'D': ", max range is natural scale degree 7",
+    'E': ", max range is natural scale degree 6",
+    'C#': ", max range is raised scale degree 7",
+    'D#': ", max range is raised scale degree 6",
+};
+
+
+for (const key of MinorScaleKeys) {
+    let description = edgeCaseDescriptions[key] ?? "";
+
+    test(`${key} melodic minor scale, one octave with upper range truncation${description}`, ({ skip }) => {
+        // Edge case behaviour has not been clarified yet
+        if (['D', 'E'].includes(key)) {
+            skip();
+        }
+        let scale: Scale = { ascending: NaturalMinorScales[key], scaleType: 'melodic-minor' };
+        expect(expandScale(scale, {
+            initialRegister: 4,
+            minNote: note("A", 1),
+            maxNote: note("C", 5),
+            octaves: 1
+        })).toEqual(oneOctaveMelodicMinorUpperRangeTruncationCases[key]);
+    });
+}
+
+
+
 
 test("should create C major two octaves", () => {
     expect(expandScale(cMajor, {
@@ -71,16 +278,7 @@ test("should create C major two octaves", () => {
     );
 });
 
-test("should create C major first five notes", () => {
-    expect(expandScale(cMajor, {
-        initialRegister: 4,
-        minNote: note("C", 4),
-        maxNote: note("G", 4), // set 'maxNote' deliberately low so that it restricts range instead of 'octaves'
-        octaves: 1
-    })).toEqual(
-        notes("C4 D4 E4 F4 G4 F4 E4 D4 C4")
-    );
-});
+
 
 test("should create C major full range (small)", () => {
     expect(expandScale(cMajor, {
@@ -178,67 +376,6 @@ test("should create A melodic minor full range", () => {
     );
 });
 
-
-test("should create A melodic minor full range, with max range on raised scale degree 6", () => {
-    expect(expandScale(aMelodicMinor, {
-        initialRegister: 4,
-        minNote: note("Bb", 3),
-        maxNote: note("F#", 6)
-    })).toEqual(
-        notes("A4 B4 C5 D5 E5 F#5 G#5 \
-            A5 B5 C6 D6 E6 F#6 \
-            E6 D6 C6 B5 A5 \
-            G5 F5 E5 D5 C5 B4 A4 \
-            G4 F4 E4 D4 C4 B3 \
-            C4 D4 E4 F#4 G#4 A4")
-    );
-});
-
-test("should create A melodic minor full range, with max range on raised scale degree 7", () => {
-    expect(expandScale(aMelodicMinor, {
-        initialRegister: 4,
-        minNote: note("Bb", 3),
-        maxNote: note("G#", 6)
-    })).toEqual(
-        notes("A4 B4 C5 D5 E5 F#5 G#5 \
-            A5 B5 C6 D6 E6 F#6 G#6 \
-            F#6 E6 D6 C6 B5 A5 \
-            G5 F5 E5 D5 C5 B4 A4 \
-            G4 F4 E4 D4 C4 B3 \
-            C4 D4 E4 F#4 G#4 A4")
-    );
-});
-
-test.skip("should create A melodic minor full range, with max range on natural scale degree 6", () => {
-    expect(expandScale(aMelodicMinor, {
-        initialRegister: 4,
-        minNote: note("Bb", 3),
-        maxNote: note("F", 6)
-    })).toEqual(
-        // Note the lack of F#6 at the top of range
-        notes("A4 B4 C5 D5 E5 F#5 G#5 \
-            A5 B5 C6 D6 E6 \
-            D6 C6 B5 A5 \
-            G5 F5 E5 D5 C5 B4 A4 \
-            G4 F4 E4 D4 C4 B3 \
-            C4 D4 E4 F#4 G#4 A4")
-    );
-});
-
-test.skip("should create A melodic minor full range, with max range on natural scale degree 7", () => {
-    expect(expandScale(aMelodicMinor, {
-        initialRegister: 4,
-        minNote: note("Bb", 3),
-        maxNote: note("G", 6)
-    })).toEqual(
-        notes("A4 B4 C5 D5 E5 F#5 G#5 \
-            A5 B5 C6 D6 E6 F#6 \
-            E6 D6 C6 B5 A5 \
-            G5 F5 E5 D5 C5 B4 A4 \
-            G4 F4 E4 D4 C4 B3 \
-            C4 D4 E4 F#4 G#4 A4")
-    );
-});
 
 test("should create A melodic minor full range, with min range on raised scale degree 7", () => {
     expect(expandScale(aMelodicMinor, {
