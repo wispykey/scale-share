@@ -86,7 +86,9 @@ export const MajorScales = {
     'Cb': ['Cb', 'Db', 'Eb', 'Fb', 'Gb', 'Ab', 'Bb'],
 } as const satisfies Partial<Record<PitchName, PitchName[]>>;
 
+
 export type MajorScaleKey = keyof typeof MajorScales;
+export const MajorScaleKeys = Object.keys(MajorScales) as (keyof typeof MajorScales)[];
 
 export const NaturalMinorScales = {
     'A': ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
@@ -107,6 +109,7 @@ export const NaturalMinorScales = {
 } as const satisfies Partial<Record<PitchName, PitchName[]>>;
 
 export type MinorScaleKey = keyof typeof MajorScales;
+export const MinorScaleKeys = Object.keys(NaturalMinorScales) as (keyof typeof NaturalMinorScales)[];
 
 export const TRIAD_SCALE_DEGREES_AS_INDICES = [0, 2, 4];
 export const SEVENTH_CHORD_SCALE_DEGREES_AS_INDICES = [0, 2, 4, 6];
