@@ -1,4 +1,4 @@
-import { type Accidental, type PitchName, type PitchLetter, type Note, type Interval, NaturalMinorScaleNotes, MajorScaleNotes, Accidentals, type MajorScaleKey, type MinorScaleKey, PitchCollection } from "./types";
+import { type Accidental, type PitchName, type PitchLetter, type Note, type Interval, NaturalMinorScales, MajorScales, Accidentals, type MajorScaleKey, type MinorScaleKey, PitchCollection } from "./types";
 
 export function splitPitchName(pitchName: PitchName): [PitchLetter, Accidental] {
     // Is there a better way to handle this? Is it worth making PitchClass its own typed object with fields?
@@ -122,7 +122,7 @@ export function getPitchNameFromInterval(pitchName: PitchName, interval: Interva
     if (!size || size > 7 || size < 1) return;
 
     // Use major scale and major intervals as a starting reference point
-    let scale = MajorScaleNotes[pitchName as keyof typeof MajorScaleNotes];
+    let scale = MajorScales[pitchName as keyof typeof MajorScales];
     if (!scale) return;
 
     switch (quality) {
@@ -153,11 +153,11 @@ export function getPitchNameFromInterval(pitchName: PitchName, interval: Interva
 
 
 export function isMajorScaleKey(value: string): value is MajorScaleKey {
-    return value in MajorScaleNotes;
+    return value in MajorScales;
 }
 
 export function isMinorScaleKey(value: string): value is MinorScaleKey {
-    return value in NaturalMinorScaleNotes;
+    return value in NaturalMinorScales;
 }
 
 

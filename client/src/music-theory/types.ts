@@ -68,7 +68,7 @@ export const Intervals = [
 export type Interval = typeof Intervals[number];
 
 // Currently do not support keys with double-sharps/flats in key signature
-export const MajorScaleNotes = {
+export const MajorScales = {
     'C': ['C', 'D', 'E', 'F', 'G', 'A', 'B'],
     'C#': ['C#', 'D#', 'E#', 'F#', 'G#', 'A#', 'B#'],
     'Db': ['Db', 'Eb', 'F', 'Gb', 'Ab', 'Bb', 'C'],
@@ -86,9 +86,9 @@ export const MajorScaleNotes = {
     'Cb': ['Cb', 'Db', 'Eb', 'Fb', 'Gb', 'Ab', 'Bb'],
 } as const satisfies Partial<Record<PitchName, PitchName[]>>;
 
-export type MajorScaleKey = keyof typeof MajorScaleNotes;
+export type MajorScaleKey = keyof typeof MajorScales;
 
-export const NaturalMinorScaleNotes = {
+export const NaturalMinorScales = {
     'A': ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
     'A#': ['A#', 'B#', 'C#', 'D#', 'E#', 'F#', 'G#'],
     'Bb': ['Bb', 'C', 'Db', 'Eb', 'F', 'Gb', 'Ab'],
@@ -106,7 +106,7 @@ export const NaturalMinorScaleNotes = {
     'Ab': ['Ab', 'Bb', 'Cb', 'Db', 'Eb', 'Fb', 'Gb'],
 } as const satisfies Partial<Record<PitchName, PitchName[]>>;
 
-export type MinorScaleKey = keyof typeof MajorScaleNotes;
+export type MinorScaleKey = keyof typeof MajorScales;
 
 export const TRIAD_SCALE_DEGREES_AS_INDICES = [0, 2, 4];
 export const SEVENTH_CHORD_SCALE_DEGREES_AS_INDICES = [0, 2, 4, 6];
